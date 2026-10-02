@@ -9,7 +9,6 @@ import type { BacktestMetrics } from "@/lib/types";
 const BADGE: Record<string, string> = {
   Numerai: "border-teal-400/25 bg-teal-400/10 text-teal-300",
   WorldQuant: "border-sky-400/25 bg-sky-400/10 text-sky-300",
-  "Rule of thumb": "border-violet-400/25 bg-violet-400/10 text-violet-300",
 };
 
 const FOCUS: Record<string, string> = { "IC Mean": "IC", "IC-IR": "IC-IR", Sharpe: "Sharpe", Fitness: "Fitness" };
@@ -23,7 +22,7 @@ export function PlatformFit({ benchmarks, metrics }: { benchmarks: CompetitiveBe
     <Panel className="flex flex-col">
       <PanelHeader
         title="Platform fit"
-        hint="Checked against the bars competitions and desks actually use."
+        hint="Rule-of-thumb bars borrowed from Numerai and WorldQuant. Not official pass/fail criteria."
         right={
           <span
             className={`rounded-full border px-2.5 py-1 font-mono text-[11px] ${
@@ -68,8 +67,7 @@ export function PlatformFit({ benchmarks, metrics }: { benchmarks: CompetitiveBe
                   className="absolute inset-y-0 left-0 rounded-full"
                   style={{
                     width: `${fill * 100}%`,
-                    background: `linear-gradient(90deg, ${color}44, ${color})`,
-                    boxShadow: `0 0 10px ${color}55`,
+                    background: color,
                     transition: "width 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
                   }}
                 />

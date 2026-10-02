@@ -154,7 +154,7 @@ export function LandingModal({ open, onDismiss }: LandingModalProps) {
 
           <button
             onClick={onDismiss}
-            className="group relative mt-7 flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-lava-gradient text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_14px_40px_-10px_rgba(255,106,61,0.7)] transition-all hover:brightness-110 active:scale-[0.99]"
+            className="group relative mt-7 flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-lava-solid text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_14px_40px_-10px_rgba(255,106,61,0.7)] transition-all hover:brightness-110 active:scale-[0.99]"
           >
             <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
             <LineChart className="h-4 w-4" />

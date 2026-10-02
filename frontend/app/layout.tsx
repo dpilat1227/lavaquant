@@ -18,7 +18,7 @@ const DESCRIPTION =
   "Write alpha expressions in the WorldQuant DSL, backtest them in seconds, and benchmark against WorldQuant BRAIN and Numerai. Built by Drew Pilat.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://drew.fun"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://quant.drew.fun"),
   title: TITLE,
   description: DESCRIPTION,
   openGraph: { title: TITLE, description: DESCRIPTION, type: "website", siteName: "lavaquant" },

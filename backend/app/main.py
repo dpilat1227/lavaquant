@@ -1,6 +1,7 @@
 """FastAPI application — Alpha research platform backend."""
 
 import logging
+import os
 import time
 from contextlib import asynccontextmanager
 from typing import Any
@@ -42,11 +43,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Only the site itself (plus local dev and Vercel previews) may call the API.
+# Override with a comma-separated ALLOWED_ORIGINS env var, e.g. on Railway.
+_DEFAULT_ORIGINS = "https://quant.drew.fun,https://lavaquant.drew.fun,https://drew.fun,http://localhost:3000,http://127.0.0.1:3000"
+ALLOWED_ORIGINS = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", _DEFAULT_ORIGINS).split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=r"https://[a-z0-9-]+\.vercel\.app",
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 

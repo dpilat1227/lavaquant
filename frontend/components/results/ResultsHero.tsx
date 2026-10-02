@@ -18,13 +18,15 @@ import type { BacktestResponse } from "@/lib/types";
 type Zone = "bad" | "warn" | "ok" | "great";
 const ZONE: Record<Zone, string> = { bad: "#ff5470", warn: "#ffc857", ok: "#7cc4ff", great: "#3ddc97" };
 
-const TAG_STYLE: Record<SignalTag["color"], string> = {
-  indigo: "border-lava-500/25 bg-lava-500/10 text-lava-300",
-  emerald: "border-up/25 bg-up/10 text-up",
-  amber: "border-amber-400/25 bg-amber-400/10 text-amber-300",
-  rose: "border-down/25 bg-down/10 text-down",
-  sky: "border-sky-400/25 bg-sky-400/10 text-sky-300",
-  violet: "border-violet-400/25 bg-violet-400/10 text-violet-300",
+// Blue for everything informational (verdicts and descriptors); amber/rose only for warnings.
+const INFO = { fg: "#93d2ff", rgb: "110,168,255" };
+const TAG_COLOR: Record<SignalTag["color"], { fg: string; rgb: string }> = {
+  indigo: INFO,
+  emerald: INFO,
+  sky: INFO,
+  violet: INFO,
+  amber: { fg: "#ffd37a", rgb: "255,200,87" },
+  rose: { fg: "#ff8aa0", rgb: "255,84,112" },
 };
 
 interface Kpi {
@@ -67,7 +69,7 @@ function buildKpis(m: BacktestResponse["metrics"]): Kpi[] {
       negative: m.ic_mean < 0,
     },
     {
-      key: "Max DD", label: "Max drawdown", value: m.max_drawdown, format: pct(1), gauge: Math.abs(m.max_drawdown), lo: 0, hi: 0.3, target: 0.2,
+      key: "Max DD", label: "Max DD", value: m.max_drawdown, format: pct(1), gauge: Math.abs(m.max_drawdown), lo: 0, hi: 0.3, target: 0.2,
       caption: "limit −20%", zone: m.max_drawdown > -0.1 ? "great" : m.max_drawdown > -0.2 ? "ok" : m.max_drawdown > -0.3 ? "warn" : "bad",
       negative: true,
     },
@@ -89,7 +91,7 @@ function KpiCell({ k, index }: { k: Kpi; index: number }) {
   return (
     <div className="reveal bg-[#0d0d10] px-5 py-4" style={{ ["--i" as string]: index + 3 }}>
       <div className="flex items-center gap-1.5">
-        <span className="eyebrow">{k.label}</span>
+        <span className="eyebrow whitespace-nowrap">{k.label}</span>
         {doc && <InfoTip text={doc.short} focus={doc.key} />}
       </div>
       <div className="mt-2 text-[30px] font-semibold leading-none tracking-tight tnum" style={{ color: k.negative && k.key !== "Max DD" ? ZONE.bad : "#fff" }}>
@@ -100,14 +102,13 @@ function KpiCell({ k, index }: { k: Kpi; index: number }) {
           className="absolute inset-y-0 left-0 rounded-full"
           style={{
             width: `${fill * 100}%`,
-            background: `linear-gradient(90deg, ${color}55, ${color})`,
-            boxShadow: `0 0 10px ${color}66`,
+            background: color,
             transition: "width 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         />
         {tickAt !== null && <div className="absolute -top-[3px] h-[10px] w-px bg-white/45" style={{ left: `${tickAt * 100}%` }} />}
       </div>
-      <div className="mt-1.5 font-mono text-[10px] text-gray-600">{k.caption}</div>
+      <div className="mt-1.5 font-mono text-[10.5px] text-gray-500">{k.caption}</div>
     </div>
   );
 }
@@ -216,7 +217,15 @@ export function ResultsHero({ result, analysis, score, sample }: Props) {
 
             <div className="reveal mt-4 flex flex-wrap gap-1.5" style={{ ["--i" as string]: 3 }}>
               {analysis.tags.map((t) => (
-                <span key={t.label} className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${TAG_STYLE[t.color]}`}>
+                <span
+                  key={t.label}
+                  className="rounded-full border px-3 py-1 text-xs font-semibold"
+                  style={{
+                    color: TAG_COLOR[t.color].fg,
+                    background: `rgba(${TAG_COLOR[t.color].rgb}, 0.16)`,
+                    borderColor: `rgba(${TAG_COLOR[t.color].rgb}, 0.4)`,
+                  }}
+                >
                   {t.label}
                 </span>
               ))}
@@ -234,7 +243,7 @@ export function ResultsHero({ result, analysis, score, sample }: Props) {
                       className="h-full rounded-full"
                       style={{
                         width: `${p.value * 100}%`,
-                        background: `linear-gradient(90deg, ${score.color}55, ${score.color})`,
+                        background: score.color,
                         transition: "width 1.4s cubic-bezier(0.16, 1, 0.3, 1)",
                       }}
                     />

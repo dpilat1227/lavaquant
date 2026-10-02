@@ -178,8 +178,7 @@ export function MLTab({ onResult, onError, onLoading }: MLTabProps) {
         </div>
       </section>
 
-      <section>
-        <div className="mb-3 eyebrow">Backtest</div>
+      <section className="border-t border-white/[0.07] pt-5">
         <BacktestControls
           universe={universe}
           onUniverseChange={setUniverse}

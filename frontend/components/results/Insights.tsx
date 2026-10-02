@@ -41,8 +41,7 @@ export function Regimes({ regimes }: { regimes: RegimeBreakdown[] }) {
                   className="h-full rounded-full"
                   style={{
                     width: `${w * 100}%`,
-                    background: `linear-gradient(90deg, ${tone.color}44, ${tone.color})`,
-                    boxShadow: `0 0 12px ${tone.color}55`,
+                    background: tone.color,
                     transition: "width 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
                   }}
                 />

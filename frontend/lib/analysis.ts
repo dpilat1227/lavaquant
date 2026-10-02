@@ -188,7 +188,7 @@ export function computeBenchmarks(metrics: BacktestMetrics): CompetitiveBenchmar
       metric: "IC Mean",
       yourValue: metrics.ic_mean,
       threshold: 0.02,
-      description: "Minimum IC for a competitive Numerai model submission",
+      description: "Rule-of-thumb floor (~0.02) for a signal worth trading. Not an official Numerai requirement.",
       passes: metrics.ic_mean > 0.02,
     },
     {
@@ -196,7 +196,7 @@ export function computeBenchmarks(metrics: BacktestMetrics): CompetitiveBenchmar
       metric: "IC-IR",
       yourValue: metrics.ic_ir,
       threshold: 0.5,
-      description: "IC / IC_std — Numerai rewards consistent, not just high, IC",
+      description: "Rule of thumb: IC-IR above ~0.5 suggests a steady signal. Numerai rewards consistency, but this is not an official Numerai cutoff.",
       passes: metrics.ic_ir > 0.5,
     },
     {
@@ -214,14 +214,6 @@ export function computeBenchmarks(metrics: BacktestMetrics): CompetitiveBenchmar
       threshold: 1.0,
       description: "Estimated with WorldQuant's published formula: Sharpe × √(|Returns| / max(Turnover, 0.125)). Uses local returns and turnover, so treat it as a preview of the BRAIN score.",
       passes: estimateFitness(metrics) > 1.0,
-    },
-    {
-      platform: "Rule of thumb",
-      metric: "Sharpe",
-      yourValue: metrics.sharpe,
-      threshold: 2.0,
-      description: "A common bar for a standalone factor to be considered institutional-grade. Most real alphas sit well below it.",
-      passes: metrics.sharpe > 2.0,
     },
   ];
 }

@@ -48,7 +48,7 @@ function FitnessBar({ fitness }: { fitness: number | null }) {
         </span>
       </div>
       <div className="relative h-1.5 rounded-full bg-white/[0.07]">
-        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${color}55, ${color})`, boxShadow: `0 0 10px ${color}66` }} />
+        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
         <div className="absolute -top-[3px] h-[12px] w-px bg-white/50" style={{ left: "50%" }} />
       </div>
       <div className="mt-1 flex justify-between font-mono text-[9px] text-gray-600">

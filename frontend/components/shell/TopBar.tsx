@@ -101,7 +101,7 @@ export function TopBar() {
           <Info className="h-4 w-4" />
         </IconButton>
         <a
-          href="https://github.com/drewpilat/lavaquant"
+          href="https://github.com/dpilat1227/lavaquant"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Source on GitHub"

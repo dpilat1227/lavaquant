@@ -135,8 +135,25 @@ body::after {
     background-clip: text;
     color: transparent;
   }
-  .bg-lava-gradient {
-    background: linear-gradient(135deg, #ff9a56 0%, #ff6a3d 45%, #ff3d6e 100%);
+  .bg-lava-solid {
+    background: #ff8545;
+  }
+  /* Selectable pill used for examples and BRAIN settings */
+  .chip {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.055);
+    color: #d4d4d8;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .chip:hover {
+    border-color: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  .chip[data-active="true"] {
+    border-color: #ff8545;
+    background: rgba(255, 133, 69, 0.2);
+    color: #fff;
   }
 
   .kbd {
@@ -182,7 +199,7 @@ body::after {
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #76767f;
+    color: #9a9aa4;
   }
 
   /* Staggered entrance. Set style={{ "--i": n }} */

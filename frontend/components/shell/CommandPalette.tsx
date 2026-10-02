@@ -196,7 +196,7 @@ export function CommandPalette({ open, onClose, mod }: { open: boolean; onClose:
                   onClick={it.run}
                   className={`relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${isActive ? "bg-white/[0.07]" : ""}`}
                 >
-                  {isActive && <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-lava-gradient" />}
+                  {isActive && <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-lava-solid" />}
                   <span className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border ${isActive ? "border-lava-500/40 bg-lava-500/15 text-lava-300" : "border-white/[0.08] bg-white/[0.03] text-gray-500"}`}>
                     {it.icon}
                   </span>

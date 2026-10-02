@@ -12,7 +12,7 @@ const Switch = React.forwardRef<
     className={cn(
       "peer inline-flex h-[22px] w-[40px] shrink-0 cursor-pointer items-center rounded-full border border-white/10 p-[2px] transition-all duration-300",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lava-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 disabled:cursor-not-allowed disabled:opacity-50",
-      "data-[state=checked]:border-lava-500/50 data-[state=checked]:bg-lava-gradient data-[state=checked]:shadow-[0_0_16px_-2px_rgba(255,106,61,0.55)] data-[state=unchecked]:bg-white/[0.06]",
+      "data-[state=checked]:border-lava-500/50 data-[state=checked]:bg-lava-solid data-[state=checked]:shadow-[0_0_16px_-2px_rgba(255,106,61,0.55)] data-[state=unchecked]:bg-white/[0.06]",
       className
     )}
     {...props}

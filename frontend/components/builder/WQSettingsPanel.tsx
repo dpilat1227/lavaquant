@@ -37,11 +37,8 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
   return (
     <button
       onClick={onClick}
-      className={`h-7 rounded-lg border px-2.5 font-mono text-[11px] font-medium transition-all ${
-        active
-          ? "border-lava-500/50 bg-lava-500/15 text-lava-200"
-          : "border-white/[0.08] bg-white/[0.03] text-gray-500 hover:border-white/20 hover:text-gray-200"
-      }`}
+      data-active={active}
+      className="chip h-7 rounded-lg px-2.5 font-mono text-[11px] font-medium"
     >
       {children}
     </button>

@@ -316,11 +316,8 @@ export function ExpressionTab({ onResult, onError, onLoading, command, onCommand
                   setExpression(ex.expression);
                   editorRef.current?.focus();
                 }}
-                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                  active
-                    ? "border-lava-500/50 bg-lava-500/15 text-lava-200 shadow-[0_0_20px_-6px_rgba(255,106,61,0.6)]"
-                    : "border-white/[0.08] bg-white/[0.03] text-gray-400 hover:border-white/20 hover:bg-white/[0.07] hover:text-white"
-                }`}
+                data-active={active}
+                className="chip rounded-full px-3 py-1.5 text-xs font-medium"
               >
                 {ex.name}
               </button>
@@ -350,8 +347,7 @@ export function ExpressionTab({ onResult, onError, onLoading, command, onCommand
       </section>
 
       {/* Backtest parameters */}
-      <section>
-        <div className="mb-3 eyebrow">Backtest</div>
+      <section className="border-t border-white/[0.07] pt-5">
         <BacktestControls
           universe={universe}
           onUniverseChange={setUniverse}

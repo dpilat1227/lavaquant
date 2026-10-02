@@ -95,8 +95,11 @@ export function BacktestControls({
       {showSectorNeutral && onSectorNeutralChange && (
         <div className="flex items-center justify-between rounded-xl border border-white/[0.07] bg-white/[0.02] px-3.5 py-3">
           <div>
-            <div className="text-[13px] font-medium text-gray-200">Sector neutral</div>
-            <div className="text-[11px] text-gray-500">Remove sector bets before ranking</div>
+            <div className="flex items-center gap-1.5 text-[13px] font-medium text-gray-200">
+              Sector neutral
+              <InfoTip text="Removes sector bets from the local backtest. The local engine only has sector codes, so sector is the only neutralization it offers. WorldQuant BRAIN has a full set (subindustry, industry, sector, market) in the BRAIN settings below, which apply only when you submit to BRAIN." />
+            </div>
+            <div className="text-[11px] text-gray-500">Local backtest only · BRAIN options below</div>
           </div>
           <Switch checked={sectorNeutral} onCheckedChange={onSectorNeutralChange} />
         </div>

@@ -11,7 +11,7 @@ export function ResultsSkeleton({ label = "Running backtest" }: { label?: string
     <div className="space-y-4 pb-24">
       <div className="flex items-center gap-3">
         <div className="relative h-[3px] w-40 overflow-hidden rounded-full bg-white/[0.07]">
-          <div className="absolute inset-y-0 left-0 w-1/3 rounded-full bg-lava-gradient animate-indeterminate" />
+          <div className="absolute inset-y-0 left-0 w-1/3 rounded-full bg-lava-solid animate-indeterminate" />
         </div>
         <span className="eyebrow animate-breathe">{label}…</span>
       </div>

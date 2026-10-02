@@ -118,7 +118,7 @@ export function WQConnectModal({ open, onClose, onConnect }: WQConnectModalProps
 
           <button
             type="submit"
-            className="h-10 w-full rounded-xl bg-lava-gradient text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_10px_30px_-8px_rgba(255,106,61,0.6)] transition-all hover:brightness-110 active:scale-[0.985]"
+            className="h-10 w-full rounded-xl bg-lava-solid text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_10px_30px_-8px_rgba(255,106,61,0.6)] transition-all hover:brightness-110 active:scale-[0.985]"
           >
             Connect and simulate
           </button>

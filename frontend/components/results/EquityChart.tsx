@@ -10,7 +10,7 @@ interface EquityChartProps {
   data: TimeSeriesPoint[];
 }
 
-const AXIS = { fill: "#6b6b75", fontSize: 10.5 };
+const AXIS = { fill: "#8d8d97", fontSize: 10.5 };
 const MARGIN = { top: 8, right: 12, left: 0, bottom: 0 };
 const Y_WIDTH = 48;
 

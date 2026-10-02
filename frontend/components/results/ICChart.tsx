@@ -11,7 +11,7 @@ interface ICChartProps {
   window?: number;
 }
 
-const AXIS = { fill: "#6b6b75", fontSize: 10.5 };
+const AXIS = { fill: "#8d8d97", fontSize: 10.5 };
 
 /** Daily IC as diverging bars, with a rolling-mean line and the overall mean as a reference. */
 export function ICChart({ data, window = 60 }: ICChartProps) {
