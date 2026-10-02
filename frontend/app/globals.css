@@ -1,0 +1,312 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --lava: #ff6a3d;
+  --lava-hot: #ffb36b;
+  --lava-deep: #ff3d81;
+  --up: #3ddc97;
+  --down: #ff5470;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.13);
+  color-scheme: dark;
+}
+
+html {
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  color: var(--foreground);
+  background: transparent;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Ambient backdrop: ember glow + faint dot grid */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(900px 520px at 82% -12%, rgba(255, 106, 61, 0.11), transparent 62%),
+    radial-gradient(700px 520px at -6% 108%, rgba(255, 61, 129, 0.08), transparent 62%),
+    radial-gradient(500px 400px at 40% 40%, rgba(255, 179, 107, 0.025), transparent 70%);
+  pointer-events: none;
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 0%, transparent 75%);
+  pointer-events: none;
+}
+
+::selection {
+  background: rgba(255, 106, 61, 0.35);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(255, 106, 61, 0.7);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Elevated surface */
+  .panel {
+    position: relative;
+    border-radius: 16px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.015) 100%),
+      #0d0d10;
+    border: 1px solid var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 1px 2px rgba(0, 0, 0, 0.5),
+      0 28px 56px -28px rgba(0, 0, 0, 0.7);
+  }
+  .panel-flat {
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid var(--border);
+  }
+  /* Legacy alias */
+  .glass {
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
+    border: 1px solid var(--border);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  /* Cursor-following border glow (set --mx/--my from JS) */
+  .spot::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 128, 73, 0.65), transparent 60%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .spot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 106, 61, 0.07), transparent 55%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+  }
+  .spot:hover::before,
+  .spot:hover::after {
+    opacity: 1;
+  }
+
+  .text-lava-gradient {
+    background: linear-gradient(100deg, #ffd29a 0%, #ff8049 38%, #ff3d81 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .bg-lava-gradient {
+    background: linear-gradient(135deg, #ff9a56 0%, #ff6a3d 45%, #ff3d6e 100%);
+  }
+
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 5px;
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 10px;
+    line-height: 1;
+    color: #a1a1aa;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-bottom-width: 2px;
+  }
+
+  .field {
+    width: 100%;
+    height: 36px;
+    border-radius: 9px;
+    padding: 0 12px;
+    font-size: 13px;
+    color: #e4e4e7;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  }
+  .field:hover {
+    border-color: var(--border-strong);
+  }
+  .field:focus {
+    outline: none;
+    border-color: rgba(255, 106, 61, 0.55);
+    background: rgba(255, 106, 61, 0.04);
+    box-shadow: 0 0 0 3px rgba(255, 106, 61, 0.12);
+  }
+
+  .eyebrow {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #76767f;
+  }
+
+  /* Staggered entrance. Set style={{ "--i": n }} */
+  .reveal {
+    animation: reveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i, 0) * 65ms);
+  }
+
+  .shimmer {
+    background: linear-gradient(100deg, rgba(255, 255, 255, 0.03) 30%, rgba(255, 255, 255, 0.09) 50%, rgba(255, 255, 255, 0.03) 70%);
+    background-size: 200% 100%;
+    animation: shimmer 2.4s linear infinite;
+  }
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+  background-clip: content-box;
+}
+
+/* Recharts */
+.recharts-wrapper,
+.recharts-wrapper *:focus,
+.recharts-surface:focus {
+  outline: none !important;
+}
+.recharts-cartesian-axis-tick-value {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+.chart-glow .recharts-area-curve {
+  filter: drop-shadow(0 0 7px rgba(255, 106, 61, 0.55));
+}
+.chart-glow-soft .recharts-line-curve {
+  filter: drop-shadow(0 0 5px rgba(255, 179, 107, 0.4));
+}
+
+/* Container-query layout: respond to the canvas width, not the viewport */
+.canvas {
+  container-type: inline-size;
+  container-name: canvas;
+}
+.grid-2-1,
+.grid-1-1,
+.hero-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+}
+@container canvas (min-width: 900px) {
+  .grid-2-1 {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+  .grid-1-1 {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+@container canvas (min-width: 760px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) 232px;
+    gap: 28px;
+  }
+}
+
+/* Hairline grid: 1px gaps reveal the container background as dividers at any wrap */
+.hairline-grid {
+  display: grid;
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@container canvas (min-width: 600px) {
+  .hairline-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@container canvas (min-width: 980px) {
+  .hairline-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* Native date inputs */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.6);
+  cursor: pointer;
+  opacity: 0.7;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+input[type="number"]::-webkit-inner-spin-button {
+  opacity: 0.3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
