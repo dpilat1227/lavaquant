@@ -8,7 +8,14 @@ import type {
   WQSimResult,
 } from "./types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+// Tolerate a missing scheme or trailing slash in NEXT_PUBLIC_API_URL
+function normalizeBase(raw: string): string {
+  const s = raw.trim().replace(/\/+$/, "");
+  if (/^https?:\/\//i.test(s)) return s;
+  return `${/^(localhost|127\.|0\.0\.0\.0)/.test(s) ? "http" : "https"}://${s}`;
+}
+
+const BASE_URL = normalizeBase(process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000");
 
 export async function fetchHealth(): Promise<boolean> {
   const ctrl = new AbortController();
