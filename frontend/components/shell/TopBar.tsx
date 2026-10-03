@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookOpen, Clock, Search, Info, Trophy } from "lucide-react";
+import { BookOpen, Clock, GraduationCap, Search, Info, Trophy } from "lucide-react";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { fetchHealth } from "@/lib/api";
@@ -91,6 +91,9 @@ export function TopBar() {
                 : "Checking the backtest engine…"}
           </TooltipContent>
         </Tooltip>
+        <IconButton label="Learn to build alphas" onClick={() => emit("open-learn")}>
+          <GraduationCap className="h-4 w-4" />
+        </IconButton>
         <IconButton label="Alpha gallery" onClick={() => emit("open-gallery")}>
           <Trophy className="h-4 w-4" />
         </IconButton>

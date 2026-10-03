@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  BookOpen, Braces, Brain, Clock, Trophy, CornerDownLeft, FlaskConical, Hash, Link2, Play, Search, Sigma, Sparkles, Wand2, ClipboardCopy, Info, Layers,
+  BookOpen, Braces, Brain, Clock, GraduationCap, Trophy, CornerDownLeft, FlaskConical, Hash, Link2, Play, Search, Sigma, Sparkles, Wand2, ClipboardCopy, Info, Layers,
 } from "lucide-react";
 import { DEFAULT_EXAMPLES, DSL_FIELDS, DSL_FUNCTIONS } from "@/lib/dsl";
 import { METRICS } from "@/lib/metrics";
@@ -61,6 +61,10 @@ export function CommandPalette({ open, onClose, mod }: { open: boolean; onClose:
       { id: "mode-ml", group: "Actions", title: "Switch to ML model", keywords: "lightgbm machine learning mode", icon: <Layers className={ic} />, run: act(() => emit("set-mode", "ml")) },
       { id: "link", group: "Actions", title: "Copy shareable link", hint: "this alpha", keywords: "share url", icon: <Link2 className={ic} />, run: act(() => emit("copy-link")) },
       { id: "summary", group: "Actions", title: "Copy results summary", hint: "plain text", keywords: "share export clipboard", icon: <ClipboardCopy className={ic} />, run: act(() => emit("copy-summary")) },
+      { id: "learn", group: "Actions", title: "Learn to build alphas", hint: "start here", keywords: "tutorial beginner guide how syntax help teach", icon: <GraduationCap className={ic} />, run: act(() => emit("open-learn", { tab: "start" })) },
+      { id: "learn-workshop", group: "Actions", title: "Build an alpha step by step", keywords: "workshop guided builder wizard", icon: <GraduationCap className={ic} />, run: act(() => emit("open-learn", { tab: "workshop" })) },
+      { id: "learn-cheat", group: "Actions", title: "Operator cheat sheet", keywords: "syntax reference functions fields formulas", icon: <GraduationCap className={ic} />, run: act(() => emit("open-learn", { tab: "cheatsheet" })) },
+      { id: "learn-recipes", group: "Actions", title: "Browse known alphas", keywords: "recipes glossary worldquant 101 popular famous", icon: <GraduationCap className={ic} />, run: act(() => emit("open-learn", { tab: "recipes" })) },
       { id: "gallery", group: "Actions", title: "Open alpha gallery", hint: "best alphas", keywords: "curated best top ranked saved results leaderboard", icon: <Trophy className={ic} />, run: act(() => emit("open-gallery")) },
       { id: "history", group: "Actions", title: "Open alpha history", keywords: "past runs saved", icon: <Clock className={ic} />, run: act(() => emit("open-history")) },
       { id: "docs", group: "Actions", title: "Open docs", keywords: "reference help glossary", icon: <BookOpen className={ic} />, run: act(() => emit("open-docs")) },

@@ -6,6 +6,7 @@ import { AlertTriangle, Brain, CheckCircle2, CircleAlert, Info } from "lucide-re
 import type { Monaco, OnMount } from "@monaco-editor/react";
 import { BacktestControls } from "./BacktestControls";
 import { RunButton, StickyFooter } from "./RunBar";
+import { ExplainCard } from "./ExplainCard";
 import { WQSettingsPanel, WQ_DEFAULT_SETTINGS } from "./WQSettingsPanel";
 import type { WQSettings } from "./WQSettingsPanel";
 import type { EditorCommand } from "./StrategyBuilder";
@@ -284,6 +285,8 @@ export function ExpressionTab({ onResult, onError, onLoading, command, onCommand
           <span className="ml-auto">hover any operator for docs</span>
         </div>
       </section>
+
+      <ExplainCard expression={expression} forward={forwardDays} />
 
       {/* WQ field mismatch */}
       {wqWarnings.length > 0 && (

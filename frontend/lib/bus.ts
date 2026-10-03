@@ -20,6 +20,7 @@ export interface BusEvents {
   "open-docs": { tab?: string; focus?: string; query?: string } | undefined;
   "open-history": undefined;
   "open-gallery": undefined;
+  "open-learn": { tab?: "start" | "workshop" | "cheatsheet" | "recipes" } | undefined;
   "show-result": { result: import("./types").BacktestResponse; meta: ResultMeta };
   "open-palette": undefined;
   "open-about": undefined;

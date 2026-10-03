@@ -1,4 +1,5 @@
 import type { Monaco } from "@monaco-editor/react";
+import { parseExpression, walk } from "./parse";
 
 export const LANG_ID = "lqdsl";
 export const THEME_ID = "lavaquant";
@@ -27,6 +28,9 @@ export const DSL_FUNCTIONS: DslFunction[] = [
   { name: "winsorize", sig: "winsorize(x, pct)", snippet: "winsorize(${1:x}, ${2:0.05})", doc: "Clip the top and bottom pct of values to tame outliers.", cat: "Cross-sectional" },
   { name: "ts_mean", sig: "ts_mean(x, d)", snippet: "ts_mean(${1:x}, ${2:20})", doc: "Rolling d-day mean per asset.", cat: "Time-series" },
   { name: "ts_std", sig: "ts_std(x, d)", snippet: "ts_std(${1:x}, ${2:20})", doc: "Rolling d-day standard deviation per asset.", cat: "Time-series" },
+  { name: "ts_sum", sig: "ts_sum(x, d)", snippet: "ts_sum(${1:x}, ${2:5})", doc: "Rolling d-day total per asset.", cat: "Time-series" },
+  { name: "ts_max", sig: "ts_max(x, d)", snippet: "ts_max(${1:x}, ${2:252})", doc: "Highest value of x in the last d days, per asset.", cat: "Time-series" },
+  { name: "ts_min", sig: "ts_min(x, d)", snippet: "ts_min(${1:x}, ${2:252})", doc: "Lowest value of x in the last d days, per asset.", cat: "Time-series" },
   { name: "ts_delta", sig: "ts_delta(x, d)", snippet: "ts_delta(${1:x}, ${2:5})", doc: "x(t) − x(t−d): change over d days.", cat: "Time-series" },
   { name: "ts_delay", sig: "ts_delay(x, d)", snippet: "ts_delay(${1:x}, ${2:1})", doc: "x(t−d): the value d days ago.", cat: "Time-series" },
   { name: "ts_rank", sig: "ts_rank(x, d)", snippet: "ts_rank(${1:x}, ${2:20})", doc: "Rank of today's value within the past d days, per asset.", cat: "Time-series" },
@@ -41,6 +45,8 @@ export const DSL_FUNCTIONS: DslFunction[] = [
   { name: "sign", sig: "sign(x)", snippet: "sign(${1:x})", doc: "Sign function: −1, 0 or 1.", cat: "Element-wise" },
   { name: "sqrt", sig: "sqrt(x)", snippet: "sqrt(${1:x})", doc: "Square root of |x|.", cat: "Element-wise" },
   { name: "power", sig: "power(x, n)", snippet: "power(${1:x}, ${2:2})", doc: "x raised to the n-th power.", cat: "Element-wise" },
+  { name: "max", sig: "max(x, y)", snippet: "max(${1:x}, ${2:0})", doc: "The larger of x and y, stock by stock. Put the data first: max(returns, 0).", cat: "Element-wise" },
+  { name: "min", sig: "min(x, y)", snippet: "min(${1:x}, ${2:0})", doc: "The smaller of x and y, stock by stock. Put the data first: min(returns, 0).", cat: "Element-wise" },
   { name: "clamp", sig: "clamp(x, lo, hi)", snippet: "clamp(${1:x}, ${2:-1}, ${3:1})", doc: "Clip values to the range [lo, hi].", cat: "Element-wise" },
 ];
 
@@ -52,7 +58,7 @@ export const DSL_FIELDS: DslField[] = [
   { name: "volume", doc: "Daily trading volume" },
   { name: "returns", doc: "Daily return: close / prev_close − 1" },
   { name: "vwap", doc: "Volume-weighted average price" },
-  { name: "cap", doc: "Market capitalization" },
+  { name: "cap", doc: "Dollar volume (price × volume). A rough stand-in for size, not true market cap." },
   { name: "sector", doc: "GICS sector code. Use with group_* operators." },
   { name: "log_returns", doc: "ln(close / prev_close). Local engine only; BRAIN calls it log_ret.", localOnly: true },
   { name: "range", doc: "Intraday range: high − low. Local engine only.", localOnly: true },
@@ -83,6 +89,21 @@ export const DEFAULT_EXAMPLES: DslExample[] = [
   { name: "Decay-Weighted Momentum", expression: "rank(ts_decay_linear(returns, 10)) - rank(ts_std(returns, 20))", description: "Recent momentum minus a volatility penalty." },
   { name: "Volume Breakout", expression: "rank(-ts_corr(close, volume, 10)) + rank(ts_delta(volume, 5))", description: "Price-volume divergence plus a volume surge." },
 ];
+
+/** [min, max] number of inputs each operator accepts. */
+export const ARITY: Record<string, [number, number]> = {
+  rank: [1, 1], zscore: [1, 1], demean: [1, 1], winsorize: [1, 2],
+  ts_mean: [2, 2], ts_std: [2, 2], ts_sum: [2, 2], ts_max: [2, 2], ts_min: [2, 2],
+  ts_delta: [2, 2], ts_delay: [2, 2], ts_rank: [2, 2], ts_corr: [3, 3], ts_decay_linear: [2, 2], ts_autocorr: [1, 3],
+  group_rank: [2, 2], group_zscore: [2, 2], group_neutralize: [2, 2],
+  log: [1, 1], abs: [1, 1], sign: [1, 1], sqrt: [1, 1], power: [2, 2], clamp: [3, 3], max: [2, 2], min: [2, 2],
+};
+
+/** Which input positions must be a plain whole number of days. */
+export const WINDOW_ARGS: Record<string, number[]> = {
+  ts_mean: [1], ts_std: [1], ts_sum: [1], ts_max: [1], ts_min: [1], ts_delta: [1], ts_delay: [1],
+  ts_rank: [1], ts_corr: [2], ts_decay_linear: [1], ts_autocorr: [1, 2],
+};
 
 const FN_SET = new Set(DSL_FUNCTIONS.map((f) => f.name));
 const FIELD_MAP = new Map(DSL_FIELDS.map((f) => [f.name, f]));
@@ -137,6 +158,29 @@ export function validateExpression(code: string): Diagnostic[] {
     }
   }
   for (const s of stack) out.push({ start: s, end: s + 1, message: "Unclosed parenthesis", severity: "error" });
+
+  // Structure checks (only when the text parses cleanly)
+  try {
+    const root = parseExpression(code);
+    walk(root, (n) => {
+      if (n.t !== "call" || !FN_SET.has(n.fn)) return;
+      const [lo, hi] = ARITY[n.fn] ?? [0, 99];
+      if (n.args.length < lo || n.args.length > hi) {
+        const sig = FN_MAP.get(n.fn)?.sig ?? n.fn;
+        const want = lo === hi ? `${lo}` : `${lo} to ${hi}`;
+        out.push({ start: n.s, end: n.fnEnd, message: `${n.fn} needs ${want} input${hi === 1 ? "" : "s"}: ${sig}`, severity: "error" });
+        return;
+      }
+      for (const idx of WINDOW_ARGS[n.fn] ?? []) {
+        const a = n.args[idx];
+        if (a && !(a.t === "num" && Number.isInteger(a.v) && a.v >= 1)) {
+          out.push({ start: a.s, end: a.e, message: `The ${idx === 1 || idx === 2 ? "window" : "input"} here must be a whole number of days, like 5 or 20`, severity: "error" });
+        }
+      }
+    });
+  } catch {
+    /* syntax problems are already reported above */
+  }
   return out;
 }
 

@@ -17,6 +17,8 @@ import { FEATURED_ALPHA } from "@/lib/featuredAlpha";
 import { emit, toast, useBus } from "@/lib/bus";
 import type { ResultMeta } from "@/lib/bus";
 import { GalleryPanel } from "@/components/shell/GalleryPanel";
+import { LearnPanel } from "@/components/learn/LearnPanel";
+import type { LearnTab } from "@/components/learn/LearnPanel";
 import { buildAlphaLink, buildSummary, copyText } from "@/lib/share";
 import type { BacktestResponse } from "@/lib/types";
 
@@ -36,6 +38,7 @@ export default function Home() {
   const [resultKey, setResultKey] = useState(0);
   const [meta, setMeta] = useState<ResultMeta>({ source: "sample" });
   const [galleryOpen, setGalleryOpen] = useState(false);
+  const [learn, setLearn] = useState<{ open: boolean; tab: LearnTab }>({ open: false, tab: "start" });
   const [loading, setLoading] = useState(false);
   const [loadingLabel, setLoadingLabel] = useState("Running backtest");
   const [error, setError] = useState("");
@@ -92,6 +95,7 @@ export default function Home() {
   useBus("open-docs", (d) => setDocs({ open: true, tab: d?.tab, focus: d?.focus, query: d?.query }));
   useBus("open-history", () => setHistoryOpen(true));
   useBus("open-gallery", () => setGalleryOpen(true));
+  useBus("open-learn", (d) => setLearn((l) => ({ open: true, tab: d?.tab ?? l.tab })));
   useBus("show-result", (d) => {
     setResult(d.result);
     setMeta(d.meta);
@@ -202,6 +206,7 @@ export default function Home() {
           }}
         />
         <GalleryPanel open={galleryOpen} onClose={() => setGalleryOpen(false)} />
+        <LearnPanel open={learn.open} tab={learn.tab} onTab={(tab) => setLearn({ open: true, tab })} onClose={() => setLearn((l) => ({ ...l, open: false }))} />
         <LandingModal open={landing.open} onDismiss={landing.dismiss} />
         <Toaster />
       </div>

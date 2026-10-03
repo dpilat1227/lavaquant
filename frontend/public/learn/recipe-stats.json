@@ -1,0 +1,357 @@
+{
+ "generatedAt": "Oct 2, 2026",
+ "universe": "US large-cap sample",
+ "period": "2020\u20132024",
+ "stats": {
+  "reversal-1d": {
+   "sharpe": 0.875,
+   "ic_mean": 0.0133,
+   "ic_ir": 0.057,
+   "annual_return": 0.1779,
+   "max_drawdown": -0.2372,
+   "avg_daily_turnover": 1.559,
+   "hit_rate": 0.518,
+   "n_trading_days": 1257
+  },
+  "reversal-5d": {
+   "sharpe": 0.669,
+   "ic_mean": 0.0139,
+   "ic_ir": 0.067,
+   "annual_return": 0.1126,
+   "max_drawdown": -0.1785,
+   "avg_daily_turnover": 0.665,
+   "hit_rate": 0.519,
+   "n_trading_days": 1257
+  },
+  "reversal-21d": {
+   "sharpe": 0.484,
+   "ic_mean": 0.0102,
+   "ic_ir": 0.05,
+   "annual_return": 0.0717,
+   "max_drawdown": -0.2025,
+   "avg_daily_turnover": 0.325,
+   "hit_rate": 0.492,
+   "n_trading_days": 1257
+  },
+  "reversal-decay": {
+   "sharpe": 0.739,
+   "ic_mean": 0.0135,
+   "ic_ir": 0.057,
+   "annual_return": 0.1504,
+   "max_drawdown": -0.2006,
+   "avg_daily_turnover": 0.799,
+   "hit_rate": 0.499,
+   "n_trading_days": 1257
+  },
+  "reversal-sector": {
+   "sharpe": 0.722,
+   "ic_mean": 0.0117,
+   "ic_ir": 0.071,
+   "annual_return": 0.0977,
+   "max_drawdown": -0.2052,
+   "avg_daily_turnover": 1.542,
+   "hit_rate": 0.512,
+   "n_trading_days": 1257
+  },
+  "ma-gap": {
+   "sharpe": 0.493,
+   "ic_mean": 0.0141,
+   "ic_ir": 0.058,
+   "annual_return": 0.0917,
+   "max_drawdown": -0.2962,
+   "avg_daily_turnover": 0.415,
+   "hit_rate": 0.516,
+   "n_trading_days": 1257
+  },
+  "price-zscore": {
+   "sharpe": 0.26,
+   "ic_mean": 0.0065,
+   "ic_ir": 0.03,
+   "annual_return": 0.0327,
+   "max_drawdown": -0.36,
+   "avg_daily_turnover": 0.566,
+   "hit_rate": 0.504,
+   "n_trading_days": 1257
+  },
+  "momentum-12-1": {
+   "sharpe": 0.009,
+   "ic_mean": 0.0105,
+   "ic_ir": 0.036,
+   "annual_return": -0.0171,
+   "max_drawdown": -0.3481,
+   "avg_daily_turnover": 0.094,
+   "hit_rate": 0.534,
+   "n_trading_days": 1257
+  },
+  "momentum-63d": {
+   "sharpe": -0.571,
+   "ic_mean": -0.0145,
+   "ic_ir": -0.054,
+   "annual_return": -0.1417,
+   "max_drawdown": -0.5945,
+   "avg_daily_turnover": 0.204,
+   "hit_rate": 0.5,
+   "n_trading_days": 1257
+  },
+  "high-52w": {
+   "sharpe": -0.54,
+   "ic_mean": -0.0198,
+   "ic_ir": -0.073,
+   "annual_return": -0.1282,
+   "max_drawdown": -0.5766,
+   "avg_daily_turnover": 0.221,
+   "hit_rate": 0.488,
+   "n_trading_days": 1257
+  },
+  "trend-efficiency": {
+   "sharpe": -0.225,
+   "ic_mean": -0.0015,
+   "ic_ir": -0.007,
+   "annual_return": -0.0618,
+   "max_drawdown": -0.4468,
+   "avg_daily_turnover": 0.355,
+   "hit_rate": 0.532,
+   "n_trading_days": 1257
+  },
+  "range-position": {
+   "sharpe": -0.216,
+   "ic_mean": -0.0056,
+   "ic_ir": -0.024,
+   "annual_return": -0.0558,
+   "max_drawdown": -0.2995,
+   "avg_daily_turnover": 0.44,
+   "hit_rate": 0.519,
+   "n_trading_days": 1257
+  },
+  "low-vol-60": {
+   "sharpe": -0.532,
+   "ic_mean": -0.0168,
+   "ic_ir": -0.052,
+   "annual_return": -0.1646,
+   "max_drawdown": -0.7048,
+   "avg_daily_turnover": 0.066,
+   "hit_rate": 0.489,
+   "n_trading_days": 1257
+  },
+  "low-vol-20": {
+   "sharpe": -0.488,
+   "ic_mean": -0.0149,
+   "ic_ir": -0.05,
+   "annual_return": -0.1459,
+   "max_drawdown": -0.6269,
+   "avg_daily_turnover": 0.16,
+   "hit_rate": 0.474,
+   "n_trading_days": 1257
+  },
+  "max-effect": {
+   "sharpe": -0.614,
+   "ic_mean": -0.0099,
+   "ic_ir": -0.039,
+   "annual_return": -0.1384,
+   "max_drawdown": -0.571,
+   "avg_daily_turnover": 0.141,
+   "hit_rate": 0.467,
+   "n_trading_days": 1257
+  },
+  "narrow-range": {
+   "sharpe": -0.539,
+   "ic_mean": -0.0145,
+   "ic_ir": -0.047,
+   "annual_return": -0.1622,
+   "max_drawdown": -0.6956,
+   "avg_daily_turnover": 0.104,
+   "hit_rate": 0.475,
+   "n_trading_days": 1257
+  },
+  "price-volume-corr": {
+   "sharpe": -0.045,
+   "ic_mean": 0.0065,
+   "ic_ir": 0.041,
+   "annual_return": -0.0157,
+   "max_drawdown": -0.3656,
+   "avg_daily_turnover": 0.524,
+   "hit_rate": 0.509,
+   "n_trading_days": 1257
+  },
+  "volume-surge": {
+   "sharpe": 0.109,
+   "ic_mean": -0.0077,
+   "ic_ir": -0.056,
+   "annual_return": 0.0059,
+   "max_drawdown": -0.2355,
+   "avg_daily_turnover": 0.389,
+   "hit_rate": 0.472,
+   "n_trading_days": 1257
+  },
+  "amihud": {
+   "sharpe": -0.215,
+   "ic_mean": 0.0052,
+   "ic_ir": 0.035,
+   "annual_return": -0.0349,
+   "max_drawdown": -0.3237,
+   "avg_daily_turnover": 0.075,
+   "hit_rate": 0.514,
+   "n_trading_days": 1257
+  },
+  "low-volume": {
+   "sharpe": -0.464,
+   "ic_mean": -0.0011,
+   "ic_ir": -0.008,
+   "annual_return": -0.0574,
+   "max_drawdown": -0.3518,
+   "avg_daily_turnover": 1.108,
+   "hit_rate": 0.486,
+   "n_trading_days": 1257
+  },
+  "gap-fade": {
+   "sharpe": 0.15,
+   "ic_mean": 0.0068,
+   "ic_ir": 0.027,
+   "annual_return": 0.0099,
+   "max_drawdown": -0.3188,
+   "avg_daily_turnover": 1.531,
+   "hit_rate": 0.498,
+   "n_trading_days": 1257
+  },
+  "intraday-fade": {
+   "sharpe": 0.509,
+   "ic_mean": 0.0122,
+   "ic_ir": 0.062,
+   "annual_return": 0.0702,
+   "max_drawdown": -0.2159,
+   "avg_daily_turnover": 1.473,
+   "hit_rate": 0.526,
+   "n_trading_days": 1257
+  },
+  "close-location": {
+   "sharpe": 0.936,
+   "ic_mean": 0.0107,
+   "ic_ir": 0.054,
+   "annual_return": 0.1537,
+   "max_drawdown": -0.2781,
+   "avg_daily_turnover": 1.592,
+   "hit_rate": 0.502,
+   "n_trading_days": 1257
+  },
+  "close-vs-vwap": {
+   "sharpe": 0.89,
+   "ic_mean": 0.0098,
+   "ic_ir": 0.052,
+   "annual_return": 0.131,
+   "max_drawdown": -0.2163,
+   "avg_daily_turnover": 1.471,
+   "hit_rate": 0.507,
+   "n_trading_days": 1257
+  },
+  "wq-101": {
+   "sharpe": -0.623,
+   "ic_mean": -0.0095,
+   "ic_ir": -0.046,
+   "annual_return": -0.1179,
+   "max_drawdown": -0.6029,
+   "avg_daily_turnover": 1.595,
+   "hit_rate": 0.474,
+   "n_trading_days": 1257
+  },
+  "wq-6": {
+   "sharpe": -0.028,
+   "ic_mean": 0.0034,
+   "ic_ir": 0.023,
+   "annual_return": -0.0124,
+   "max_drawdown": -0.3069,
+   "avg_daily_turnover": 0.557,
+   "hit_rate": 0.509,
+   "n_trading_days": 1257
+  },
+  "wq-12": {
+   "sharpe": -0.562,
+   "ic_mean": 0.0039,
+   "ic_ir": 0.029,
+   "annual_return": -0.0678,
+   "max_drawdown": -0.3979,
+   "avg_daily_turnover": 1.391,
+   "hit_rate": 0.511,
+   "n_trading_days": 1257
+  },
+  "wq-33": {
+   "sharpe": 0.683,
+   "ic_mean": 0.0138,
+   "ic_ir": 0.062,
+   "annual_return": 0.1223,
+   "max_drawdown": -0.3197,
+   "avg_daily_turnover": 1.562,
+   "hit_rate": 0.526,
+   "n_trading_days": 1257
+  },
+  "wq-41": {
+   "sharpe": 0.935,
+   "ic_mean": 0.0099,
+   "ic_ir": 0.052,
+   "annual_return": 0.1382,
+   "max_drawdown": -0.2033,
+   "avg_daily_turnover": 1.47,
+   "hit_rate": 0.51,
+   "n_trading_days": 1257
+  },
+  "wq-3": {
+   "sharpe": -0.572,
+   "ic_mean": -0.0097,
+   "ic_ir": -0.08,
+   "annual_return": -0.0639,
+   "max_drawdown": -0.3416,
+   "avg_daily_turnover": 0.567,
+   "hit_rate": 0.474,
+   "n_trading_days": 1257
+  },
+  "wq-4": {
+   "sharpe": 0.472,
+   "ic_mean": 0.0136,
+   "ic_ir": 0.075,
+   "annual_return": 0.0662,
+   "max_drawdown": -0.2178,
+   "avg_daily_turnover": 0.743,
+   "hit_rate": 0.519,
+   "n_trading_days": 1257
+  },
+  "wq-54": {
+   "sharpe": 0.913,
+   "ic_mean": 0.0079,
+   "ic_ir": 0.042,
+   "annual_return": 0.1407,
+   "max_drawdown": -0.2749,
+   "avg_daily_turnover": 1.587,
+   "hit_rate": 0.497,
+   "n_trading_days": 1257
+  },
+  "blend-rev-pv": {
+   "sharpe": 0.606,
+   "ic_mean": 0.0146,
+   "ic_ir": 0.108,
+   "annual_return": 0.0723,
+   "max_drawdown": -0.2311,
+   "avg_daily_turnover": 0.637,
+   "hit_rate": 0.534,
+   "n_trading_days": 1257
+  },
+  "blend-rev-lowvol": {
+   "sharpe": -0.27,
+   "ic_mean": 0.0005,
+   "ic_ir": 0.002,
+   "annual_return": -0.0617,
+   "max_drawdown": -0.4762,
+   "avg_daily_turnover": 0.542,
+   "hit_rate": 0.503,
+   "n_trading_days": 1257
+  },
+  "blend-agree": {
+   "sharpe": -0.334,
+   "ic_mean": -0.0073,
+   "ic_ir": -0.057,
+   "annual_return": -0.0468,
+   "max_drawdown": -0.3157,
+   "avg_daily_turnover": 0.66,
+   "hit_rate": 0.472,
+   "n_trading_days": 1257
+  }
+ }
+}

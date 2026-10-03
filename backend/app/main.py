@@ -113,6 +113,9 @@ async def list_operators() -> dict[str, Any]:
         "time_series": [
             {"name": "ts_mean", "signature": "ts_mean(x, d)", "description": "d-day rolling mean per asset"},
             {"name": "ts_std", "signature": "ts_std(x, d)", "description": "d-day rolling std per asset"},
+            {"name": "ts_sum", "signature": "ts_sum(x, d)", "description": "d-day rolling sum per asset"},
+            {"name": "ts_max", "signature": "ts_max(x, d)", "description": "Highest value in the past d days per asset"},
+            {"name": "ts_min", "signature": "ts_min(x, d)", "description": "Lowest value in the past d days per asset"},
             {"name": "ts_delta", "signature": "ts_delta(x, d)", "description": "x(t) - x(t-d)"},
             {"name": "ts_delay", "signature": "ts_delay(x, d)", "description": "x(t-d)"},
             {"name": "ts_rank", "signature": "ts_rank(x, d)", "description": "Rank of today within past d days per asset"},
@@ -131,6 +134,8 @@ async def list_operators() -> dict[str, Any]:
             {"name": "sign", "signature": "sign(x)", "description": "Sign (-1, 0, 1)"},
             {"name": "sqrt", "signature": "sqrt(x)", "description": "Square root of abs(x)"},
             {"name": "power", "signature": "power(x, n)", "description": "x^n"},
+            {"name": "max", "signature": "max(x, y)", "description": "Larger of x and y, element-wise"},
+            {"name": "min", "signature": "min(x, y)", "description": "Smaller of x and y, element-wise"},
             {"name": "clamp", "signature": "clamp(x, lo, hi)", "description": "Clip to [lo, hi]"},
         ],
         "data_fields": [
