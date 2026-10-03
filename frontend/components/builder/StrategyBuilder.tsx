@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Segmented } from "@/components/ui/Segmented";
+import { InfoTip } from "@/components/ui/InfoTip";
 import { useBus } from "@/lib/bus";
 import { ExpressionTab } from "./ExpressionTab";
 import { MLTab } from "./MLTab";
@@ -40,14 +41,19 @@ export function StrategyBuilder({ onResult, onError, onLoading }: StrategyBuilde
           <h2 className="eyebrow">Workbench</h2>
           <span className="text-[11px] text-gray-600">{mode === "expression" ? "Write a signal, test it in seconds" : "Train a model on engineered factors"}</span>
         </div>
-        <Segmented
-          value={mode}
-          onChange={setMode}
-          options={[
-            { value: "expression", label: "Expression alpha" },
-            { value: "ml", label: "ML model" },
-          ]}
-        />
+        <div className="flex items-center gap-2.5">
+          <div className="min-w-0 flex-1">
+            <Segmented
+              value={mode}
+              onChange={setMode}
+              options={[
+                { value: "expression", label: "Expression alpha" },
+                { value: "ml", label: "ML model" },
+              ]}
+            />
+          </div>
+          <InfoTip text="Expression alpha: you write the formula and the engine tests it. ML model: you pick ready-made factors and a LightGBM model learns its own formula from them, validated with time-series cross-validation. Start with expressions. They teach you what drives returns; ML is for combining factors once you know them." />
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-5">

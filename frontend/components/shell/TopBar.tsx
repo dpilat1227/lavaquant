@@ -115,6 +115,14 @@ export function TopBar() {
         >
           <GitHubMark className="h-4 w-4" />
         </a>
+        <a
+          href="https://drew.fun"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-1.5 hidden h-8 items-center gap-1 rounded-lg border border-white/[0.08] px-2.5 text-[12px] font-medium text-gray-400 transition-colors hover:border-white/20 hover:bg-white/[0.05] hover:text-white lg:flex"
+        >
+          drew.fun <span className="text-gray-600">↗</span>
+        </a>
       </div>
     </header>
   );

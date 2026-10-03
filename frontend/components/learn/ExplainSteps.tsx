@@ -36,30 +36,41 @@ export function ExplainSteps({ exp, source, forward = 5 }: { exp: Explanation; s
   return (
     <div className="space-y-4">
       {exp.uses.length > 0 && (
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[12px] text-gray-500">
-          <span className="eyebrow !text-[9.5px]">Reads</span>
-          {exp.uses.map((u) => (
-            <span key={u.name}>
-              <code className="font-mono text-[#5eead4]">{u.name}</code> <span className="text-gray-500">{u.phrase}</span>
-            </span>
-          ))}
+        <div>
+          <div className="eyebrow !text-[9.5px]">Data it uses</div>
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
+            {exp.uses.map((u) => (
+              <span key={u.name} className="inline-flex items-baseline gap-1.5 rounded-md border border-white/[0.08] bg-white/[0.03] px-2 py-1 text-[11.5px] text-gray-500">
+                <code className="font-mono text-[#5eead4]">{u.name}</code>
+                {u.phrase.replace(/^the /, "")}
+              </span>
+            ))}
+          </div>
         </div>
       )}
 
-      <ol className="space-y-3">
+      <div>
+        <div className="eyebrow !text-[9.5px]">Step by step</div>
+        <p className="mt-1 text-[12px] leading-relaxed text-gray-500">
+          One formula, built up in layers. Each step wraps the one before it, so the code grows until the last step is the whole thing.
+        </p>
+      </div>
+
+      <ol className="space-y-4">
         {exp.steps.map((s) => (
           <li key={s.n} className="flex gap-3">
             <span className="mt-[1px] flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-white/15 font-mono text-[10.5px] font-semibold text-gray-300">
               {s.n}
             </span>
             <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[9.5px] font-semibold uppercase tracking-[0.12em]" style={{ color: KIND_COLOR[s.kind] }}>
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0 overflow-x-auto text-[12.5px] leading-snug">
+                  <Expr code={s.code} className="whitespace-nowrap" />
+                </div>
+                <span className="flex flex-shrink-0 items-center gap-1.5 text-[10.5px] text-gray-500">
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: KIND_COLOR[s.kind] }} />
                   {KIND_LABEL[s.kind]}
                 </span>
-              </div>
-              <div className="mt-1 overflow-x-auto text-[12px] leading-snug">
-                <Expr code={s.code} className="whitespace-nowrap" />
               </div>
               <p className="mt-1.5 text-[12.5px] leading-relaxed text-gray-400">
                 <Text text={s.text} />

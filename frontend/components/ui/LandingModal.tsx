@@ -45,7 +45,7 @@ const SPARK = (() => {
   const n = 80;
   for (let i = 0; i <= n; i++) {
     const x = (i / n) * 640;
-    const y = 96 - i * 0.82 + Math.sin(i * 0.55) * 5.5 + Math.sin(i * 1.7) * 2.4 + (i > 38 && i < 52 ? (i - 38) * 0.6 * (i < 45 ? 1 : (52 - i) / 7 * 1) : 0);
+    const y = 156 - i * 1.08 + Math.sin(i * 0.55) * 5.5 + Math.sin(i * 1.7) * 2.4 + (i > 38 && i < 52 ? (i - 38) * 0.6 * (i < 45 ? 1 : (52 - i) / 7 * 1) : 0);
     pts.push(`${i === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`);
   }
   return pts.join(" ");
@@ -71,9 +71,9 @@ export function LandingModal({ open, onDismiss }: LandingModalProps) {
 
       <div className="panel reveal relative w-full max-w-[640px] overflow-hidden !rounded-3xl shadow-[0_60px_160px_-20px_rgba(0,0,0,0.95),0_0_120px_-30px_rgba(255,106,61,0.35)]">
         {/* header art */}
-        <div className="relative h-[132px] overflow-hidden border-b border-white/[0.07]">
+        <div className="relative h-[172px] overflow-hidden border-b border-white/[0.07]">
           <div className="absolute inset-0 bg-[radial-gradient(500px_220px_at_70%_0%,rgba(255,106,61,0.28),transparent_70%),radial-gradient(400px_200px_at_10%_100%,rgba(255,61,129,0.18),transparent_70%)]" />
-          <svg viewBox="0 0 640 132" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden>
+          <svg viewBox="0 0 640 172" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden>
             <defs>
               <linearGradient id="sparkStroke" x1="0" x2="1" y1="0" y2="0">
                 <stop offset="0%" stopColor="#ffb36b" stopOpacity="0.1" />
@@ -85,7 +85,7 @@ export function LandingModal({ open, onDismiss }: LandingModalProps) {
                 <stop offset="100%" stopColor="#ff6a3d" stopOpacity="0" />
               </linearGradient>
             </defs>
-            <path d={`${SPARK} L640 132 L0 132 Z`} fill="url(#sparkFill)" className="animate-fade-in" style={{ animationDelay: "1.2s" }} />
+            <path d={`${SPARK} L640 172 L0 172 Z`} fill="url(#sparkFill)" className="animate-fade-in" style={{ animationDelay: "1.2s" }} />
             <path
               d={SPARK}
               fill="none"
@@ -96,7 +96,7 @@ export function LandingModal({ open, onDismiss }: LandingModalProps) {
               style={{ strokeDasharray: 1, strokeDashoffset: 1, animation: "draw 2.4s cubic-bezier(0.16,1,0.3,1) 0.2s forwards", filter: "drop-shadow(0 0 8px rgba(255,106,61,0.7))" }}
             />
           </svg>
-          <div className="absolute bottom-5 left-7 flex items-center gap-4">
+          <div className="absolute left-7 top-6 flex items-center gap-4">
             <LogoMark size={52} />
             <div>
               <h1 className="text-[30px] font-semibold leading-none tracking-tight text-white">lavaquant</h1>

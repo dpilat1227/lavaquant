@@ -1,26 +1,16 @@
-import { useId } from "react";
-
-/** lavaquant mark: a Q whose counter holds a rising line. */
+/** lavaquant mark: the Lava flame-drop, with a rising signal inside it. Flat orange on dark, same family as the other Lava projects. */
 export function LogoMark({ size = 28, className = "" }: { size?: number; className?: string }) {
-  const id = useId().replace(/:/g, "");
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" className={className} aria-hidden>
-      <defs>
-        <linearGradient id={`lg-${id}`} x1="3" y1="2" x2="29" y2="30" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#ffa35e" />
-          <stop offset="0.5" stopColor="#ff6a3d" />
-          <stop offset="1" stopColor="#ff3d6e" />
-        </linearGradient>
-        <radialGradient id={`gl-${id}`} cx="0.3" cy="0.15" r="0.9">
-          <stop stopColor="#fff" stopOpacity="0.38" />
-          <stop offset="0.55" stopColor="#fff" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-      <rect width="32" height="32" rx="9" fill={`url(#lg-${id})`} />
-      <rect width="32" height="32" rx="9" fill={`url(#gl-${id})`} />
-      <circle cx="15" cy="15" r="7.6" stroke="#fff" strokeWidth="2.2" />
-      <path d="M10.6 17.4l3-3.2 2.4 1.9 3.3-4.2" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M20.6 20.6L25 25" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" />
+      <rect x="0.5" y="0.5" width="31" height="31" rx="9" fill="#121214" stroke="#ff7a1a" strokeOpacity="0.4" />
+      <path
+        d="M16 4.8c0 0-7.6 7.4-7.6 14a7.6 7.6 0 0 0 15.2 0c0-6.6-7.6-14-7.6-14z"
+        stroke="#ff7a1a"
+        strokeWidth="2.1"
+        strokeLinejoin="round"
+      />
+      <path d="M12 21.4l3-3.1 2.2 1.8 2.6-3.7" stroke="#ffb36b" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="19.9" cy="16.4" r="1.5" fill="#ffb36b" />
     </svg>
   );
 }

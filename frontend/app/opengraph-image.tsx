@@ -52,23 +52,12 @@ export default function OpenGraphImage() {
         </svg>
 
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <div
-            style={{
-              width: 72,
-              height: 72,
-              borderRadius: 20,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "linear-gradient(135deg, #ffa35e, #ff6a3d 50%, #ff3d6e)",
-            }}
-          >
-            <svg width="44" height="44" viewBox="0 0 32 32" fill="none">
-              <circle cx="15" cy="15" r="7.6" stroke="#fff" strokeWidth="2.2" />
-              <path d="M10.6 17.4l3-3.2 2.4 1.9 3.3-4.2" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M20.6 20.6L25 25" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" />
-            </svg>
-          </div>
+          <svg width="72" height="72" viewBox="0 0 32 32" fill="none">
+            <rect x="0.5" y="0.5" width="31" height="31" rx="9" fill="#121214" stroke="#ff7a1a" strokeOpacity="0.4" />
+            <path d="M16 4.8c0 0-7.6 7.4-7.6 14a7.6 7.6 0 0 0 15.2 0c0-6.6-7.6-14-7.6-14z" stroke="#ff7a1a" strokeWidth="2.1" strokeLinejoin="round" />
+            <path d="M12 21.4l3-3.1 2.2 1.8 2.6-3.7" stroke="#ffb36b" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="19.9" cy="16.4" r="1.5" fill="#ffb36b" />
+          </svg>
           <div style={{ fontSize: 40, fontWeight: 700, letterSpacing: -1 }}>lavaquant</div>
         </div>
 

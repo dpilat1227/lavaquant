@@ -2,12 +2,10 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Brain, CheckCircle2, CircleAlert, Info } from "lucide-react";
+import { AlertTriangle, Brain, CheckCircle2, CircleAlert, GraduationCap, Info } from "lucide-react";
 import type { Monaco, OnMount } from "@monaco-editor/react";
 import { BacktestControls } from "./BacktestControls";
 import { RunButton, StickyFooter } from "./RunBar";
-import { ExplainCard } from "./ExplainCard";
-import { CoachCard } from "./CoachCard";
 import { WQSettingsPanel, WQ_DEFAULT_SETTINGS } from "./WQSettingsPanel";
 import type { WQSettings } from "./WQSettingsPanel";
 import type { EditorCommand } from "./StrategyBuilder";
@@ -20,6 +18,7 @@ import { applyMarkers, DEFAULT_EXAMPLES, LANG_ID, setupMonaco, THEME_ID, validat
 import { EXAMPLE_CITATIONS, PAPERS } from "@/lib/references";
 import { emit, toast, useBus } from "@/lib/bus";
 import { readAlphaParam } from "@/lib/share";
+import { setWorkbench } from "@/lib/workbench";
 import { useModKey } from "@/lib/useModKey";
 import type { BacktestMetrics, BacktestResponse, Universe, WQCredentials, WQSimResult } from "@/lib/types";
 
@@ -98,6 +97,10 @@ export function ExpressionTab({ onResult, onError, onLoading, command, onCommand
     }
     onCommandHandled();
   }, [command, onCommandHandled]);
+
+  useEffect(() => {
+    setWorkbench({ expression, forward: forwardDays, metrics: lastRun && lastRun.expression === expression.trim() ? lastRun.metrics : null });
+  }, [expression, forwardDays, lastRun]);
 
   const handleRun = useCallback(async () => {
     const expr = expression.trim();
@@ -218,7 +221,15 @@ export function ExpressionTab({ onResult, onError, onLoading, command, onCommand
       {/* Editor */}
       <section>
         <div className="mb-2 flex items-center justify-between">
-          <span className="eyebrow">Alpha expression</span>
+          <span className="flex items-center gap-2.5">
+            <span className="eyebrow">Alpha expression</span>
+            <button
+              onClick={() => emit("open-learn", { tab: "mine" })}
+              className="flex items-center gap-1 text-[11px] font-medium text-lava-400 transition-colors hover:text-lava-300"
+            >
+              <GraduationCap className="h-3.5 w-3.5" /> Explain this
+            </button>
+          </span>
           <span
             className={`flex items-center gap-1.5 text-[11px] ${
               status.tone === "ok" ? "text-up" : status.tone === "error" ? "text-down" : status.tone === "warn" ? "text-amber-400" : status.tone === "info" ? "text-sky-400" : "text-gray-600"
@@ -289,8 +300,6 @@ export function ExpressionTab({ onResult, onError, onLoading, command, onCommand
         </div>
       </section>
 
-      <ExplainCard expression={expression} forward={forwardDays} />
-      <CoachCard expression={expression} forward={forwardDays} metrics={lastRun && lastRun.expression === expression.trim() ? lastRun.metrics : null} />
 
       {/* WQ field mismatch */}
       {wqWarnings.length > 0 && (

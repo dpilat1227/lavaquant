@@ -35,10 +35,10 @@ export interface Explanation {
 }
 
 export const KIND_LABEL: Record<StepKind, string> = {
-  time: "Over time, per stock",
-  cross: "Across stocks, each day",
-  group: "Within each group",
-  math: "Math",
+  time: "per stock, over time",
+  cross: "across stocks, each day",
+  group: "within each sector",
+  math: "math",
 };
 
 const FIELD_PHRASE: Record<string, string> = {

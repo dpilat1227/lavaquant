@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, CornerDownRight, Loader2, Play, Send } from "lucide-react";
+import { CornerDownRight, Loader2, Play, Send } from "lucide-react";
 import { Expr } from "@/components/ui/Expr";
 import { askCoach, fetchCoachStatus } from "@/lib/api";
 import type { CoachReply, CoachRequest } from "@/lib/api";
 import type { BacktestMetrics } from "@/lib/types";
 import { emit, toast } from "@/lib/bus";
 import { localCoach } from "@/lib/coachLocal";
-
-const KEY = "lq_coach_open";
 
 type Mode = CoachRequest["mode"];
 
@@ -30,7 +28,6 @@ interface Props {
 export function CoachCard({ expression, forward, metrics }: Props) {
   const [enabled, setEnabled] = useState(false);
   const [remaining, setRemaining] = useState<number | null>(null);
-  const [open, setOpen] = useState(true);
   const [busy, setBusy] = useState<Mode | null>(null);
   const [question, setQuestion] = useState("");
   const [reply, setReply] = useState<CoachReply | null>(null);
@@ -39,7 +36,6 @@ export function CoachCard({ expression, forward, metrics }: Props) {
   const history = useRef<{ role: "user" | "assistant"; content: string }[]>([]);
 
   useEffect(() => {
-    if (localStorage.getItem(KEY) === "0") setOpen(false);
     fetchCoachStatus()
       .then((s) => {
         setEnabled(s.enabled);
@@ -47,13 +43,6 @@ export function CoachCard({ expression, forward, metrics }: Props) {
       })
       .catch(() => {});
   }, []);
-
-  function toggle() {
-    setOpen((o) => {
-      localStorage.setItem(KEY, o ? "0" : "1");
-      return !o;
-    });
-  }
 
   async function go(mode: Mode, label: string) {
     if (busy) return;
@@ -106,18 +95,18 @@ export function CoachCard({ expression, forward, metrics }: Props) {
   const hasExpr = expression.trim().length > 0;
 
   return (
-    <section className="overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.02]">
-      <div className="flex items-center justify-between gap-3 px-3.5 py-2.5">
-        <button onClick={toggle} className="flex min-w-0 flex-1 items-center gap-2 text-left" aria-expanded={open}>
-          <ChevronDown className={`h-3.5 w-3.5 flex-shrink-0 text-gray-500 transition-transform duration-300 ${open ? "" : "-rotate-90"}`} />
+    <section className="space-y-3.5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
           <span className="eyebrow">Coach</span>
           <span className="rounded-full bg-lava-500/15 px-2 py-0.5 text-[10px] font-medium text-lava-300">{enabled ? "AI" : "Offline"}</span>
-        </button>
+        </div>
         {enabled && remaining !== null && <span className="flex-shrink-0 font-mono text-[10px] text-gray-600">{remaining} left today</span>}
       </div>
 
-      {open && (
-        <div className="animate-fade-in space-y-3.5 border-t border-white/[0.06] px-3.5 pb-4 pt-3.5">
+      {(
+
+        <div className="space-y-3.5">
           <p className="text-[12px] leading-relaxed text-gray-500">
             Here to teach, not to hand you answers. It explains why a formula might work, suggests one change at a time, and helps you read the numbers.{!enabled && " This one runs on rules, not AI: free and instant, but it only knows a fixed set of ideas."}
           </p>
