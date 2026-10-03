@@ -93,10 +93,10 @@ export function WQSettingsPanel({ settings, onChange }: WQSettingsPanelProps) {
             <div>
               <Label
                 label="Delay"
-                tooltip="Trading delay in days. Delay 1 means you observe today's signal and trade tomorrow, the standard for live BRAIN submissions. Delay 2 is more conservative."
+                tooltip="When trades happen relative to the data. Delay 1 means you use data through yesterday and trade today, the standard for BRAIN submissions. Delay 0 lets the signal use today's data and trade today, which BRAIN allows for some datasets and which is harder to pass. This only applies to BRAIN. The local backtest always uses delay 1: score at today's close, earn tomorrow's return."
               />
               <div className="flex gap-1.5">
-                {[1, 2].map((d) => (
+                {[0, 1].map((d) => (
                   <Chip key={d} active={settings.delay === d} onClick={() => onChange({ ...settings, delay: d })}>
                     D{d}
                   </Chip>

@@ -23,7 +23,7 @@ export interface LocalMetrics {
 
 // ── Reading the expression ──────────────────────────────────────────────────
 
-type Tag = "reversal" | "momentum" | "continuation" | "lowvol" | "highvol" | "volume" | "intraday" | "pvcorr" | "level";
+type Tag = "value" | "quality" | "reversal" | "momentum" | "continuation" | "lowvol" | "highvol" | "volume" | "intraday" | "pvcorr" | "level";
 
 interface Shape {
   src: string;
@@ -101,6 +101,8 @@ function shapeOf(src: string): Shape | null {
     tags.push(v?.neg ? "lowvol" : "highvol");
     window ??= v ? windowOf(v.node) : null;
   }
+  if (["book_to_market", "earnings_yield", "sales_to_price", "cashflow_yield", "mktcap"].some((f) => fields.has(f))) tags.push("value");
+  if (["roe", "roa", "op_margin", "leverage"].some((f) => fields.has(f))) tags.push("quality");
   if (fns.has("ts_corr")) tags.push("pvcorr");
   if (["volume", "volume_ratio", "cap"].some((f) => fields.has(f))) tags.push("volume");
   if (["open", "high", "low", "gap", "range"].some((f) => fields.has(f)) && !move) tags.push("intraday");
@@ -123,6 +125,14 @@ function shapeOf(src: string): Shape | null {
 // ── What each kind of alpha is betting on ───────────────────────────────────
 
 const STORY: Record<Tag, { story: string; breaks: string }> = {
+  value: {
+    story: "It bets that cheap stocks, measured against what the company owns, earns or sells, beat expensive ones. Either investors overpay for exciting companies, or cheap stocks carry a risk they get paid for.",
+    breaks: "Value is slow and can lose for years. It did badly through most of the 2010s while growth stocks led. It also tends to buy whole sectors (banks, energy), so compare it with a sector-neutral version. A low price can mean a company that really is in trouble.",
+  },
+  quality: {
+    story: "It bets that profitable, steady, conservatively financed businesses are underpriced, because investors chase excitement over durability.",
+    breaks: "Quality is often expensive, so it can lag when cheap, low-quality stocks rally. Accounting ratios are also noisy: one-off charges move them. Pair it with a value signal to avoid overpaying.",
+  },
   reversal: {
     story: "It bets on overreaction. When a stock falls sharply, some of the selling is people who need to sell now, not people who know something. Buyers who step in and supply that liquidity get paid as the price drifts back. Winners get the mirror image.",
     breaks: "It breaks when the move was real news. A drop on bad earnings doesn't bounce, it keeps going. It also tends to fail in strong trending markets, and it trades a lot, so costs matter.",

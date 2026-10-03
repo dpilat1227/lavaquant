@@ -1,4 +1,4 @@
-export type RecipeFamily = "Reversal" | "Momentum" | "Volatility & risk" | "Volume & liquidity" | "Intraday & gaps" | "WorldQuant 101" | "Blends";
+export type RecipeFamily = "Reversal" | "Momentum" | "Volatility & risk" | "Volume & liquidity" | "Intraday & gaps" | "WorldQuant 101" | "Fundamentals" | "Blends";
 
 export interface Recipe {
   id: string;
@@ -15,7 +15,7 @@ export interface Recipe {
   tweaks: string[];
 }
 
-export const RECIPE_FAMILIES: RecipeFamily[] = ["Reversal", "Momentum", "Volatility & risk", "Volume & liquidity", "Intraday & gaps", "WorldQuant 101", "Blends"];
+export const RECIPE_FAMILIES: RecipeFamily[] = ["Reversal", "Momentum", "Volatility & risk", "Volume & liquidity", "Intraday & gaps", "WorldQuant 101", "Fundamentals", "Blends"];
 
 export const RECIPES: Recipe[] = [
   // ── Reversal ────────────────────────────────────────────────────────────────
@@ -339,6 +339,102 @@ export const RECIPES: Recipe[] = [
     tweaks: ["Wrap in rank()", "Try power(…, 3) instead of 5"],
   },
 
+  // ── Fundamentals ────────────────────────────────────────────────────────────
+  {
+    id: "value-bm",
+    name: "Book-to-market value",
+    family: "Fundamentals",
+    level: 1,
+    idea: "Cheap stocks (high book value relative to price) have historically beaten expensive ones. The classic value factor. It moves slowly, so it barely trades.",
+    expression: "rank(book_to_market)",
+    source: "Fama & French (1992)",
+    tweaks: ["Use group_neutralize(\u2026, sector) so you're not just buying banks", "Compare with earnings_yield"],
+  },
+  {
+    id: "value-ey",
+    name: "Earnings yield",
+    family: "Fundamentals",
+    level: 1,
+    idea: "Earnings divided by price, the inverse of P/E. Buy stocks that earn a lot per dollar you pay for them.",
+    expression: "rank(earnings_yield)",
+    source: "Basu (1977)",
+    tweaks: ["Try cashflow_yield, which is harder to manipulate than earnings", "Neutralize by sector"],
+  },
+  {
+    id: "value-cf",
+    name: "Cash-flow yield",
+    family: "Fundamentals",
+    level: 1,
+    idea: "Operating cash flow divided by market cap. Like earnings yield, but cash is harder for a company to dress up than accounting profit.",
+    expression: "rank(cashflow_yield)",
+    source: "Lakonishok, Shleifer & Vishny (1994)",
+    tweaks: ["Blend with earnings_yield", "Compare against sales_to_price"],
+  },
+  {
+    id: "value-sp",
+    name: "Sales-to-price",
+    family: "Fundamentals",
+    level: 1,
+    idea: "Revenue per dollar of market cap. Works for companies with no profit yet, where earnings yield is meaningless.",
+    expression: "rank(sales_to_price)",
+    tweaks: ["Sector-neutralize it, since margins differ widely by sector", "Blend with earnings_yield"],
+  },
+  {
+    id: "quality-roe",
+    name: "Return on equity",
+    family: "Fundamentals",
+    level: 1,
+    idea: "Profitable companies earn more per dollar of shareholder money. The bet is that high-quality businesses are underpriced.",
+    expression: "rank(roe)",
+    source: "Novy-Marx (2013), related",
+    tweaks: ["Compare with roa, which ignores how much debt is used", "Check it isn't just the high-leverage stocks"],
+  },
+  {
+    id: "quality-lev",
+    name: "Low leverage",
+    family: "Fundamentals",
+    level: 1,
+    idea: "Companies with less debt relative to assets are safer in downturns. Flip the sign to bet on the heavily indebted instead.",
+    expression: "rank(-leverage)",
+    source: "Asness, Frazzini & Pedersen (2019), related",
+    tweaks: ["Try bet-with instead of against and see which direction held in this sample", "Blend with roe"],
+  },
+  {
+    id: "growth-sales",
+    name: "Sales growth",
+    family: "Fundamentals",
+    level: 2,
+    idea: "Revenue now versus a year ago. Because fundamentals only change when a filing comes out, ts_delay(sales, 252) is the figure from about a year earlier.",
+    expression: "rank(sales / ts_delay(sales, 252) - 1)",
+    tweaks: ["Try earnings growth with net_income", "Subtract a sector average with group_neutralize"],
+  },
+  {
+    id: "value-sector",
+    name: "Value within sector",
+    family: "Fundamentals",
+    level: 2,
+    idea: "Earnings yield, compared only against stocks in the same sector. Different sectors trade at structurally different valuations, so this asks 'cheap for its sector' instead.",
+    expression: "group_neutralize(rank(earnings_yield), sector)",
+    tweaks: ["Swap earnings_yield for book_to_market", "Blend two value measures"],
+  },
+  {
+    id: "value-quality",
+    name: "Quality at a reasonable price",
+    family: "Fundamentals",
+    level: 3,
+    idea: "Cheap and profitable. Cheap alone can mean a bad business; profitable alone can mean you overpay. Together they cover each other's weakness.",
+    expression: "rank(earnings_yield) + rank(roe)",
+    tweaks: ["Weight value more: 2 * rank(earnings_yield) + rank(roe)", "Add -leverage as a third ingredient"],
+  },
+  {
+    id: "value-reversal",
+    name: "Value plus reversal",
+    family: "Fundamentals",
+    level: 3,
+    idea: "A slow signal (value) plus a fast one (weekly reversal). They rely on unrelated effects, so the blend is steadier than either alone.",
+    expression: "rank(earnings_yield) + rank(-ts_delta(close, 5))",
+    tweaks: ["Weight them unequally", "Try book_to_market instead of earnings_yield"],
+  },
   // ── Blends ──────────────────────────────────────────────────────────────────
   {
     id: "blend-rev-pv",

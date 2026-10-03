@@ -63,6 +63,23 @@ const FIELD_PHRASE: Record<string, string> = {
   shares: "shares outstanding",
   industry: "the industry",
   subindustry: "the sub-industry",
+  sales: "sales over the last 12 months",
+  net_income: "net income over the last 12 months",
+  operating_income: "operating income over the last 12 months",
+  cashflow_op: "operating cash flow over the last 12 months",
+  equity: "book value (shareholders' equity)",
+  assets: "total assets",
+  liabilities: "total liabilities",
+  shares_out: "shares outstanding",
+  mktcap: "market cap",
+  book_to_market: "book value relative to market cap",
+  earnings_yield: "earnings relative to market cap",
+  sales_to_price: "sales relative to market cap",
+  cashflow_yield: "cash flow relative to market cap",
+  roe: "return on equity",
+  roa: "return on assets",
+  op_margin: "operating margin",
+  leverage: "liabilities relative to assets",
 };
 
 const FIELD_NAMES = new Set(DSL_FIELDS.map((f) => f.name));
@@ -82,8 +99,8 @@ function kindOf(n: Node): StepKind {
 type Unit = "price" | "volume" | "ratio" | "scaled" | "log" | null;
 
 const PRICE = new Set(["close", "open", "high", "low", "vwap"]);
-const VOLUME = new Set(["volume", "cap", "adv5", "adv10", "adv20", "adv60", "shares"]);
-const RATIO = new Set(["returns", "log_returns", "gap", "range", "volume_ratio", "log_ret"]);
+const VOLUME = new Set(["volume", "cap", "adv5", "adv10", "adv20", "adv60", "shares", "shares_out"]);
+const RATIO = new Set(["returns", "log_returns", "gap", "range", "volume_ratio", "log_ret", "book_to_market", "earnings_yield", "sales_to_price", "cashflow_yield", "roe", "roa", "op_margin", "leverage"]);
 const SCALED_FNS = new Set(["rank", "zscore", "group_rank", "group_zscore", "ts_rank", "sign", "ts_corr", "ts_autocorr"]);
 const PASS_FNS = new Set(["ts_mean", "ts_std", "ts_sum", "ts_max", "ts_min", "ts_delta", "ts_delay", "ts_decay_linear", "winsorize", "demean", "group_neutralize", "abs", "sqrt", "clamp", "max", "min", "power"]);
 

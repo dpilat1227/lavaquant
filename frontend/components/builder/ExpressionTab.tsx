@@ -109,6 +109,11 @@ export function ExpressionTab({ onResult, onError, onLoading, command, onCommand
       toast(`Fix ${errors.length} syntax ${errors.length === 1 ? "error" : "errors"} first: ${errors[0].message}`, "error");
       return;
     }
+    const brainOnly = diags.find((d) => d.needsBrain);
+    if (brainOnly) {
+      toast("This uses data only WorldQuant has. Run it with the BRAIN button instead.", "error");
+      return;
+    }
     setLoading(true);
     onLoading(true, "Running backtest");
     onError("");
@@ -136,7 +141,7 @@ export function ExpressionTab({ onResult, onError, onLoading, command, onCommand
       setLoading(false);
       onLoading(false);
     }
-  }, [expression, loading, errors, universe, startDate, endDate, forwardDays, sectorNeutral, onLoading, onError, onResult]);
+  }, [expression, loading, errors, diags, universe, startDate, endDate, forwardDays, sectorNeutral, onLoading, onError, onResult]);
 
   const handleWQSubmit = useCallback(
     async (creds?: WQCredentials) => {

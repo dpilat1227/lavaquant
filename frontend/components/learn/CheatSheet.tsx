@@ -73,6 +73,27 @@ const FIELD_ROWS: { name: string; plain: string }[] = [
   { name: "sector", plain: "The sector. Only useful as the group input to group_ operators." },
 ];
 
+/** Company fundamentals from SEC filings. Each value only appears after the filing was public. */
+const FUNDAMENTAL_ROWS: { name: string; plain: string }[] = [
+  { name: "mktcap", plain: "Market cap: price × shares outstanding. Real company size." },
+  { name: "book_to_market", plain: "Book value / market cap. High = cheap relative to what the company owns." },
+  { name: "earnings_yield", plain: "Net income / market cap. The inverse of P/E." },
+  { name: "sales_to_price", plain: "Sales / market cap." },
+  { name: "cashflow_yield", plain: "Operating cash flow / market cap." },
+  { name: "roe", plain: "Net income / equity: profit per dollar of book value." },
+  { name: "roa", plain: "Net income / total assets." },
+  { name: "op_margin", plain: "Operating income / sales." },
+  { name: "leverage", plain: "Liabilities / total assets. High = debt-heavy." },
+  { name: "sales", plain: "Revenue over the last 12 months, in dollars." },
+  { name: "net_income", plain: "Net income over the last 12 months." },
+  { name: "operating_income", plain: "Operating income over the last 12 months (banks don't report it)." },
+  { name: "cashflow_op", plain: "Operating cash flow over the last 12 months." },
+  { name: "equity", plain: "Shareholders' equity (book value)." },
+  { name: "assets", plain: "Total assets." },
+  { name: "liabilities", plain: "Total liabilities." },
+  { name: "shares_out", plain: "Diluted shares outstanding, adjusted for later splits." },
+];
+
 function InsertButton({ text }: { text: string }) {
   return (
     <button
@@ -104,6 +125,7 @@ export function CheatSheet() {
     [query]
   );
   const fields = FIELD_ROWS.filter((f) => !query || `${f.name} ${f.plain}`.toLowerCase().includes(query));
+  const fundamentals = FUNDAMENTAL_ROWS.filter((f) => !query || `${f.name} ${f.plain} fundamentals`.toLowerCase().includes(query));
 
   return (
     <div className="space-y-7">
@@ -122,6 +144,26 @@ export function CheatSheet() {
             {fields.map((f) => (
               <div key={f.name} className="flex items-center gap-3 px-3.5 py-2.5">
                 <code className="w-[104px] flex-shrink-0 font-mono text-[12.5px] text-[#5eead4]">{f.name}</code>
+                <span className="flex-1 text-[12.5px] leading-snug text-gray-400">{f.plain}</span>
+                <InsertButton text={f.name} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {fundamentals.length > 0 && (
+        <section className="space-y-2.5">
+          <div>
+            <div className="eyebrow">Fundamentals (from SEC filings)</div>
+            <p className="mt-1 text-[12px] leading-relaxed text-gray-500">
+              US stocks only. They change when a company files (four times a year), so they behave like slow step functions. Ratios like <code className="font-mono text-gray-300">book_to_market</code> still move daily because price does. A number is hidden until the day after its filing, so there is no peeking.
+            </p>
+          </div>
+          <div className="divide-y divide-white/[0.06] overflow-hidden rounded-xl border border-white/[0.07]">
+            {fundamentals.map((f) => (
+              <div key={f.name} className="flex items-center gap-3 px-3.5 py-2.5">
+                <code className="w-[128px] flex-shrink-0 font-mono text-[12.5px] text-[#5eead4]">{f.name}</code>
                 <span className="flex-1 text-[12.5px] leading-snug text-gray-400">{f.plain}</span>
                 <InsertButton text={f.name} />
               </div>
@@ -163,6 +205,20 @@ export function CheatSheet() {
           </div>
         </section>
       ))}
+
+      {!query && (
+        <section className="space-y-2.5">
+          <div className="eyebrow">WorldQuant datafields</div>
+          <div className="rounded-xl border border-white/[0.07] bg-white/[0.02] px-3.5 py-3 text-[12.5px] leading-relaxed text-gray-400">
+            <p>
+              BRAIN has thousands of datasets this app doesn&apos;t, such as options (<code className="font-mono text-gray-200">implied_volatility_call_10</code>), analyst estimates, news and sentiment. The local Run button can&apos;t evaluate them. Write the expression here and send it with the <span className="text-gray-200">BRAIN</span> button; it runs on WorldQuant&apos;s data.
+            </p>
+            <p className="mt-2">
+              Some have local stand-ins: <code className="font-mono text-gray-200">historical_volatility_10</code> is close to <code className="font-mono text-gray-200">ts_std(returns, 10) * sqrt(252)</code>, and <code className="font-mono text-gray-200">adv20</code> is <code className="font-mono text-gray-200">ts_mean(volume, 20)</code>. The fundamentals above use different names from BRAIN&apos;s <code className="font-mono text-gray-200">fnd6_…</code> fields.
+            </p>
+          </div>
+        </section>
+      )}
 
       {!query && (
         <section className="space-y-2.5">

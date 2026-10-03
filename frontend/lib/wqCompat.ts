@@ -16,6 +16,10 @@ const INCOMPATIBLE: Record<string, string> = {
   range:        "high - low  (or (high - low) / close for %)",
 };
 
+// Fundamentals computed locally from SEC filings. BRAIN has its own fnd6_* / est_* datasets under different names.
+const FUNDAMENTALS = ["sales", "net_income", "operating_income", "cashflow_op", "equity", "assets", "liabilities", "shares_out", "mktcap", "book_to_market", "earnings_yield", "sales_to_price", "cashflow_yield", "roe", "roa", "op_margin", "leverage"];
+for (const f of FUNDAMENTALS) INCOMPATIBLE[f] = "a BRAIN fundamentals field. Browse the Fundamental datasets on BRAIN for the exact name (fnd6_…)";
+
 export function checkWQCompat(expression: string): FieldWarning[] {
   const warnings: FieldWarning[] = [];
   for (const [field, suggestion] of Object.entries(INCOMPATIBLE)) {

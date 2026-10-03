@@ -64,10 +64,27 @@ export const DSL_FIELDS: DslField[] = [
   { name: "range", doc: "Intraday range: high − low. Local engine only.", localOnly: true },
   { name: "gap", doc: "Overnight gap: open / prev_close − 1. Local engine only.", localOnly: true },
   { name: "volume_ratio", doc: "Volume / 20-day average volume. Local engine only; use adv20 on BRAIN.", localOnly: true },
-  { name: "adv5", doc: "5-day average daily dollar volume (BRAIN)", brainOnly: true },
-  { name: "adv10", doc: "10-day average daily dollar volume (BRAIN)", brainOnly: true },
-  { name: "adv20", doc: "20-day average daily dollar volume (BRAIN)", brainOnly: true },
-  { name: "adv60", doc: "60-day average daily dollar volume (BRAIN)", brainOnly: true },
+  { name: "sales", doc: "Revenue over the last 12 months, in dollars. Known from the filing date on. Local engine only; BRAIN uses fnd6_ fields.", localOnly: true },
+  { name: "net_income", doc: "Net income over the last 12 months, in dollars. Local engine only.", localOnly: true },
+  { name: "operating_income", doc: "Operating income over the last 12 months, in dollars. Banks don't report it. Local engine only.", localOnly: true },
+  { name: "cashflow_op", doc: "Operating cash flow over the last 12 months, in dollars. Local engine only.", localOnly: true },
+  { name: "equity", doc: "Shareholders' equity (book value) from the latest balance sheet, in dollars. Local engine only.", localOnly: true },
+  { name: "assets", doc: "Total assets from the latest balance sheet, in dollars. Local engine only.", localOnly: true },
+  { name: "liabilities", doc: "Total liabilities from the latest balance sheet, in dollars. Local engine only.", localOnly: true },
+  { name: "shares_out", doc: "Diluted shares outstanding, adjusted for later stock splits. Local engine only.", localOnly: true },
+  { name: "mktcap", doc: "Market cap: close × shares_out. Real size, unlike cap. Local engine only.", localOnly: true },
+  { name: "book_to_market", doc: "Equity / market cap. High means cheap relative to book value. Local engine only.", localOnly: true },
+  { name: "earnings_yield", doc: "Net income / market cap (the inverse of P/E). Local engine only.", localOnly: true },
+  { name: "sales_to_price", doc: "Sales / market cap. Local engine only.", localOnly: true },
+  { name: "cashflow_yield", doc: "Operating cash flow / market cap. Local engine only.", localOnly: true },
+  { name: "roe", doc: "Net income / equity: profit per dollar of book value. Local engine only.", localOnly: true },
+  { name: "roa", doc: "Net income / assets. Local engine only.", localOnly: true },
+  { name: "op_margin", doc: "Operating income / sales: how much of each sales dollar is operating profit. Local engine only.", localOnly: true },
+  { name: "leverage", doc: "Liabilities / assets: how debt-funded the company is. Local engine only.", localOnly: true },
+  { name: "adv5", doc: "Average daily volume over the past 5 days (BRAIN)", brainOnly: true },
+  { name: "adv10", doc: "Average daily volume over the past 10 days (BRAIN)", brainOnly: true },
+  { name: "adv20", doc: "Average daily volume over the past 20 days (BRAIN)", brainOnly: true },
+  { name: "adv60", doc: "Average daily volume over the past 60 days (BRAIN)", brainOnly: true },
   { name: "log_ret", doc: "Log return (BRAIN native)", brainOnly: true },
   { name: "shares", doc: "Shares outstanding (BRAIN)", brainOnly: true },
   { name: "industry", doc: "GICS industry code (BRAIN)", brainOnly: true },
@@ -116,6 +133,8 @@ export interface Diagnostic {
   end: number;
   message: string;
   severity: "error" | "warning" | "info";
+  /** The expression can't run on the local engine, only on BRAIN */
+  needsBrain?: boolean;
 }
 
 export function validateExpression(code: string): Diagnostic[] {
@@ -151,9 +170,9 @@ export function validateExpression(code: string): Diagnostic[] {
     } else {
       const f = FIELD_MAP.get(tok);
       if (!f) {
-        out.push({ start, end, message: `Unknown field "${tok}"`, severity: "warning" });
+        out.push({ start, end, message: `"${tok}" isn't in the local dataset. If it's a WorldQuant datafield, use the BRAIN button to run it.`, severity: "warning", needsBrain: true });
       } else if (f.brainOnly) {
-        out.push({ start, end, message: `"${tok}" exists on WorldQuant BRAIN only. The local backtest can't evaluate it.`, severity: "info" });
+        out.push({ start, end, message: `"${tok}" exists on WorldQuant BRAIN only. The local backtest can't evaluate it.`, severity: "info", needsBrain: true });
       }
     }
   }

@@ -81,7 +81,7 @@ export function BacktestControls({
       </div>
 
       <div>
-        <Label tip="How many trading days ahead the signal is scored against. Short horizons suit fast reversal signals; longer ones suit slow factors like value or momentum.">
+        <Label tip="How many trading days ahead the score is checked against. It changes IC and IC-IR only. Sharpe, return and drawdown always come from rebalancing daily, so they don't move. Short horizons suit fast signals like reversal; longer ones suit slow ones like value or momentum.">
           Prediction horizon
         </Label>
         <Segmented

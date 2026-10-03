@@ -19,6 +19,7 @@ from .models import (
 )
 from .data.fetcher import fetch_price_data, get_available_features
 from .data.universe import get_universe, UNIVERSES
+from .data.fundamentals import build_fields as build_fundamentals, used_fields as used_fundamentals
 from .engine.alpha_dsl import AlphaDSLEvaluator
 from .engine.backtest import run_backtest
 from .ml.features import build_feature_matrix, FEATURE_CATEGORIES, ALL_FEATURES
@@ -144,6 +145,9 @@ async def list_operators() -> dict[str, Any]:
             "close", "open", "high", "low", "volume",
             "returns", "log_returns", "vwap", "range", "gap",
             "volume_ratio", "sector", "cap",
+            "sales", "net_income", "operating_income", "cashflow_op", "equity", "assets", "liabilities",
+            "shares_out", "mktcap", "book_to_market", "earnings_yield", "sales_to_price", "cashflow_yield",
+            "roe", "roa", "op_margin", "leverage",
         ],
         "example_alphas": [
             {"name": "Short-Term Reversal", "expression": "rank(-ts_delta(close, 5))", "description": "Short-term price reversal signal"},
@@ -164,6 +168,13 @@ async def backtest_expression(req: ExpressionBacktestRequest) -> dict:
         data = fetch_price_data(req.universe, req.start_date, req.end_date)
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Data fetch failed: {e}")
+
+    wanted = used_fundamentals(req.expression)
+    if wanted:
+        try:
+            data.update(build_fundamentals(data, wanted))
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
 
     try:
         evaluator = AlphaDSLEvaluator(data)
