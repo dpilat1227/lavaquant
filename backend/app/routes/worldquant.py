@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/wq", tags=["worldquant"])
 
 WQ_BASE = "https://api.worldquantbrain.com"
 POLL_INTERVAL = 5   # seconds between status checks
-MAX_POLLS = 24      # 24 × 5s = 120s timeout
+MAX_POLLS = 40      # 40 × 5s = 200s timeout
 
 
 class WQSimRequest(BaseModel):
@@ -29,18 +29,26 @@ class WQSimRequest(BaseModel):
     truncation: float = 0.08
 
 
-async def _authenticate(client: httpx.AsyncClient, username: str, password: str) -> dict[str, str]:
-    resp = await client.post(
-        f"{WQ_BASE}/authentication",
-        json={"username": username, "password": password},
-        timeout=20.0,
-    )
-    if resp.status_code not in (200, 201):
-        raise HTTPException(status_code=401, detail="WorldQuant authentication failed — check your email and password")
-    return dict(resp.cookies)
+async def _authenticate(client: httpx.AsyncClient, username: str, password: str) -> None:
+    """BRAIN logs in with HTTP Basic auth (not a JSON body). On success it sets a session cookie
+    on the client, which every later request on this client then carries."""
+    resp = await client.post(f"{WQ_BASE}/authentication", auth=(username.strip(), password), timeout=20.0)
+    if resp.status_code in (200, 201):
+        return
+    if resp.status_code == 401 and "persona" in resp.headers.get("www-authenticate", "").lower():
+        loc = resp.headers.get("location", "")
+        link = loc if loc.startswith("http") else f"{WQ_BASE}{loc}"
+        raise HTTPException(
+            status_code=401,
+            detail=f"Your login is right, but WorldQuant wants a biometric check first. Open {link} to finish it, then try again.",
+        )
+    if resp.status_code == 401:
+        raise HTTPException(status_code=401, detail="WorldQuant rejected that email and password. Check both, and use the email you sign in to BRAIN with.")
+    raise HTTPException(status_code=502, detail=f"WorldQuant login failed with status {resp.status_code}.")
 
 
-async def _submit(client: httpx.AsyncClient, cookies: dict[str, str], req: WQSimRequest) -> tuple[str, dict[str, Any]]:
+async def _simulate(client: httpx.AsyncClient, req: WQSimRequest) -> tuple[str | None, bool]:
+    """Start a simulation and wait for it. Returns (alpha_id, finished)."""
     payload: dict[str, Any] = {
         "type": "REGULAR",
         "settings": {
@@ -60,13 +68,7 @@ async def _submit(client: httpx.AsyncClient, cookies: dict[str, str], req: WQSim
         "regular": req.expression,
     }
 
-    resp = await client.post(
-        f"{WQ_BASE}/alphas",
-        json=payload,
-        cookies=cookies,
-        timeout=30.0,
-    )
-
+    resp = await client.post(f"{WQ_BASE}/simulations", json=payload, timeout=30.0)
     if resp.status_code not in (200, 201):
         try:
             detail = resp.json()
@@ -74,34 +76,32 @@ async def _submit(client: httpx.AsyncClient, cookies: dict[str, str], req: WQSim
             detail = resp.text[:400]
         raise HTTPException(status_code=400, detail=f"Simulation rejected: {detail}")
 
-    data = resp.json()
-    alpha_id = data.get("id") or (data.get("alpha") or {}).get("id", "")
-    return alpha_id, data
+    location = resp.headers.get("location")
+    if not location:
+        raise HTTPException(status_code=502, detail="WorldQuant accepted the simulation but didn't say where to poll for it.")
 
-
-async def _poll(client: httpx.AsyncClient, cookies: dict[str, str], alpha_id: str) -> dict[str, Any] | None:
+    # While a simulation runs, the progress URL answers with a Retry-After header. When it's gone, we're done.
     for _ in range(MAX_POLLS):
         await asyncio.sleep(POLL_INTERVAL)
-        resp = await client.get(
-            f"{WQ_BASE}/alphas/{alpha_id}",
-            cookies=cookies,
-            timeout=15.0,
-        )
-        if resp.status_code != 200:
-            logger.warning("WQ poll returned %d for alpha %s", resp.status_code, alpha_id)
+        prog = await client.get(location, timeout=15.0)
+        wait = prog.headers.get("retry-after")
+        if wait and float(wait) > 0:
             continue
+        if prog.status_code != 200:
+            continue
+        data = prog.json()
+        status = str(data.get("status", "")).upper()
+        if status in ("ERROR", "FAIL", "FAILED"):
+            raise HTTPException(status_code=400, detail=f"WQ simulation failed: {data.get('message') or status}")
+        return data.get("alpha"), True
+    return None, False
 
-        data = resp.json()
-        status = data.get("status", "")
 
-        if status in ("ERROR", "FAILURE", "UNSUBMITTED"):
-            msg = data.get("message") or data.get("error") or status
-            raise HTTPException(status_code=400, detail=f"WQ simulation {status}: {msg}")
-
-        if status == "DONE" or data.get("is"):
-            return data
-
-    return None  # timed out
+async def _fetch_alpha(client: httpx.AsyncClient, alpha_id: str) -> dict[str, Any]:
+    resp = await client.get(f"{WQ_BASE}/alphas/{alpha_id}", timeout=20.0)
+    if resp.status_code != 200:
+        raise HTTPException(status_code=502, detail=f"Simulation finished but the result couldn't be fetched (status {resp.status_code}).")
+    return resp.json()
 
 
 def _extract_metrics(data: dict[str, Any]) -> dict[str, Any]:
@@ -130,22 +130,17 @@ async def wq_simulate(req: WQSimRequest) -> dict[str, Any]:
     """
     async with httpx.AsyncClient() as client:
         try:
-            cookies = await _authenticate(client, req.username, req.password)
+            await _authenticate(client, req.username, req.password)
         except HTTPException:
             raise
         except Exception as e:
             raise HTTPException(status_code=503, detail=f"Could not reach WorldQuant API: {e}")
 
-        alpha_id, initial_data = await _submit(client, cookies, req)
-
-        if not alpha_id:
-            return {"status": "submitted", "alpha_id": None, "metrics": None}
-
-        completed = await _poll(client, cookies, alpha_id)
-
-        if completed is None:
+        alpha_id, finished = await _simulate(client, req)
+        if not finished or not alpha_id:
             return {"status": "pending", "alpha_id": alpha_id, "metrics": None}
 
+        completed = await _fetch_alpha(client, alpha_id)
         return {
             "status": "done",
             "alpha_id": alpha_id,
