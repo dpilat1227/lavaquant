@@ -24,6 +24,7 @@ from .engine.backtest import run_backtest
 from .ml.features import build_feature_matrix, FEATURE_CATEGORIES, ALL_FEATURES
 from .ml.pipeline import run_ml_backtest
 from .routes.worldquant import router as wq_router
+from .routes.coach import router as coach_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -58,6 +59,7 @@ app.add_middleware(
 )
 
 app.include_router(wq_router)
+app.include_router(coach_router)
 
 
 @app.get("/health")

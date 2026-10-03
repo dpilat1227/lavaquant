@@ -87,3 +87,41 @@ export function submitToWQBrain(body: WQSimRequest): Promise<WQSimResult> {
     body: JSON.stringify(body),
   });
 }
+
+export interface CoachRequest {
+  mode: "explain" | "next" | "review" | "ask";
+  expression: string;
+  question?: string;
+  forward_days: number;
+  metrics?: Record<string, number>;
+  history?: { role: "user" | "assistant"; content: string }[];
+}
+
+export interface CoachExperiment {
+  title: string;
+  expression: string;
+  why: string;
+  predict: string;
+}
+
+export interface CoachReply {
+  reply: string;
+  experiments: CoachExperiment[];
+  concept: { term: string; plain: string } | null;
+  check: string | null;
+  remaining: number;
+}
+
+export interface CoachStatus {
+  enabled: boolean;
+  remaining: number;
+  daily_limit: number;
+}
+
+export function fetchCoachStatus(): Promise<CoachStatus> {
+  return apiFetch<CoachStatus>("/api/coach/status");
+}
+
+export function askCoach(body: CoachRequest): Promise<CoachReply> {
+  return apiFetch<CoachReply>("/api/coach", { method: "POST", body: JSON.stringify(body) });
+}

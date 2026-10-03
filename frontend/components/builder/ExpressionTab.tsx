@@ -7,6 +7,7 @@ import type { Monaco, OnMount } from "@monaco-editor/react";
 import { BacktestControls } from "./BacktestControls";
 import { RunButton, StickyFooter } from "./RunBar";
 import { ExplainCard } from "./ExplainCard";
+import { CoachCard } from "./CoachCard";
 import { WQSettingsPanel, WQ_DEFAULT_SETTINGS } from "./WQSettingsPanel";
 import type { WQSettings } from "./WQSettingsPanel";
 import type { EditorCommand } from "./StrategyBuilder";
@@ -20,7 +21,7 @@ import { EXAMPLE_CITATIONS, PAPERS } from "@/lib/references";
 import { emit, toast, useBus } from "@/lib/bus";
 import { readAlphaParam } from "@/lib/share";
 import { useModKey } from "@/lib/useModKey";
-import type { BacktestResponse, Universe, WQCredentials, WQSimResult } from "@/lib/types";
+import type { BacktestMetrics, BacktestResponse, Universe, WQCredentials, WQSimResult } from "@/lib/types";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -42,6 +43,7 @@ interface ExpressionTabProps {
 export function ExpressionTab({ onResult, onError, onLoading, command, onCommandHandled }: ExpressionTabProps) {
   const mod = useModKey();
   const [expression, setExpression] = useState(DEFAULT_EXPRESSION);
+  const [lastRun, setLastRun] = useState<{ expression: string; metrics: BacktestMetrics } | null>(null);
   const [universe, setUniverse] = useState<Universe>("sp500");
   const [startDate, setStartDate] = useState("2020-01-01");
   const [endDate, setEndDate] = useState("2024-12-31");
@@ -118,6 +120,7 @@ export function ExpressionTab({ onResult, onError, onLoading, command, onCommand
         sector_neutral: sectorNeutral,
       });
       onResult(result);
+      setLastRun({ expression: expr, metrics: result.metrics });
       addLocalResult(expr, {
         sharpe: result.metrics.sharpe,
         ic_mean: result.metrics.ic_mean,
@@ -287,6 +290,7 @@ export function ExpressionTab({ onResult, onError, onLoading, command, onCommand
       </section>
 
       <ExplainCard expression={expression} forward={forwardDays} />
+      <CoachCard expression={expression} forward={forwardDays} metrics={lastRun && lastRun.expression === expression.trim() ? lastRun.metrics : null} />
 
       {/* WQ field mismatch */}
       {wqWarnings.length > 0 && (
