@@ -104,8 +104,8 @@ export const METRICS: MetricDoc[] = [
   },
   {
     key: "Score",
-    label: "lavaquant score",
-    name: "lavaquant Score",
+    label: "LavaQuant score",
+    name: "LavaQuant Score",
     formula: "weighted blend, 0 to 100",
     color: "text-lava-300",
     threshold: "Heuristic, not an industry metric",

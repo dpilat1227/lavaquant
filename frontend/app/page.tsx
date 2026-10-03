@@ -221,7 +221,7 @@ function MobileView() {
         <header className="flex items-center gap-3 px-5 pb-4 pt-6">
           <LogoMark size={36} />
           <div>
-            <h1 className="text-lg font-semibold leading-none tracking-tight text-white">lavaquant</h1>
+            <h1 className="text-lg font-semibold leading-none tracking-tight text-white">LavaQuant</h1>
             <p className="mt-1 text-xs text-gray-500">Quantitative alpha research · Drew Pilat, UChicago MS CS</p>
           </div>
         </header>

@@ -68,7 +68,7 @@ export function CommandPalette({ open, onClose, mod }: { open: boolean; onClose:
       { id: "gallery", group: "Actions", title: "Open alpha gallery", hint: "best alphas", keywords: "curated best top ranked saved results leaderboard", icon: <Trophy className={ic} />, run: act(() => emit("open-gallery")) },
       { id: "history", group: "Actions", title: "Open alpha history", keywords: "past runs saved", icon: <Clock className={ic} />, run: act(() => emit("open-history")) },
       { id: "docs", group: "Actions", title: "Open docs", keywords: "reference help glossary", icon: <BookOpen className={ic} />, run: act(() => emit("open-docs")) },
-      { id: "about", group: "Actions", title: "About lavaquant", keywords: "intro welcome author", icon: <Info className={ic} />, run: act(() => emit("open-about")) },
+      { id: "about", group: "Actions", title: "About LavaQuant", keywords: "intro welcome author", icon: <Info className={ic} />, run: act(() => emit("open-about")) },
     ];
     const examples: Item[] = DEFAULT_EXAMPLES.map((e) => ({
       id: `ex-${e.name}`,

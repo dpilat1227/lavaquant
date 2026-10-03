@@ -53,7 +53,7 @@ export function TopBar() {
       <div className="flex min-w-0 items-center gap-3">
         <LogoMark size={28} />
         <div className="flex items-baseline gap-2.5">
-          <span className="text-[15px] font-semibold tracking-tight text-white">lavaquant</span>
+          <span className="text-[15px] font-semibold tracking-tight text-white">LavaQuant</span>
           <span className="hidden h-3.5 w-px bg-white/15 lg:block" />
           <span className="hidden text-xs text-gray-500 lg:block">alpha research lab</span>
         </div>

@@ -1,4 +1,4 @@
-# lavaquant
+# LavaQuant
 
 Alpha research lab. Write WorldQuant-style expressions, backtest them, compare against BRAIN and Numerai. Next.js + FastAPI + LightGBM.
 
@@ -6,7 +6,7 @@ Unaffiliated with WorldQuant.
 
 Live: [quant.drew.fun](https://quant.drew.fun)
 
-![lavaquant](docs/screenshot.png)
+![LavaQuant](docs/screenshot.png)
 
 The result on first load is simulated sample data. Run a backtest for real numbers.
 

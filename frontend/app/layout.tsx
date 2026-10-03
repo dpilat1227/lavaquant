@@ -13,7 +13,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const TITLE = "lavaquant — Quantitative Alpha Research Platform";
+const TITLE = "LavaQuant — Quantitative Alpha Research Platform";
 const DESCRIPTION =
   "Write alpha expressions in the WorldQuant DSL, backtest them in seconds, and benchmark against WorldQuant BRAIN and Numerai. Built by Drew Pilat.";
 
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://quant.drew.fun"),
   title: TITLE,
   description: DESCRIPTION,
-  openGraph: { title: TITLE, description: DESCRIPTION, type: "website", siteName: "lavaquant" },
+  openGraph: { title: TITLE, description: DESCRIPTION, type: "website", siteName: "LavaQuant" },
   twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
 };
 

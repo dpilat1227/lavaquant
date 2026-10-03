@@ -99,7 +99,7 @@ export function LandingModal({ open, onDismiss }: LandingModalProps) {
           <div className="absolute left-7 top-6 flex items-center gap-4">
             <LogoMark size={52} />
             <div>
-              <h1 className="text-[30px] font-semibold leading-none tracking-tight text-white">lavaquant</h1>
+              <h1 className="text-[30px] font-semibold leading-none tracking-tight text-white">LavaQuant</h1>
               <p className="mt-1.5 text-[13px] text-gray-400">Quantitative alpha research platform</p>
             </div>
           </div>

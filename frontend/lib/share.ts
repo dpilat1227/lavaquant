@@ -20,7 +20,7 @@ export function buildSummary(r: BacktestResponse): string {
   const s = computeScore(m);
   const pct = (x: number, d = 1) => `${(x * 100).toFixed(d)}%`;
   return [
-    `lavaquant backtest${r.expression ? ` · ${r.expression}` : ""}`,
+    `LavaQuant backtest${r.expression ? ` · ${r.expression}` : ""}`,
     `Score ${s.score}/100 (${s.tier})`,
     `Sharpe ${m.sharpe.toFixed(2)} · Sortino ${m.sortino.toFixed(2)} · Annual return ${pct(m.annual_return)} · Max DD ${pct(m.max_drawdown)}`,
     `IC ${m.ic_mean.toFixed(4)} · IC-IR ${m.ic_ir.toFixed(2)} · Hit rate ${pct(m.hit_rate, 0)} · Turnover ${pct(m.avg_daily_turnover, 0)}`,

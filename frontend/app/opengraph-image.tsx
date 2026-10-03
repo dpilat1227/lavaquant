@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "lavaquant: quantitative alpha research platform";
+export const alt = "LavaQuant: quantitative alpha research platform";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -58,7 +58,7 @@ export default function OpenGraphImage() {
             <path d="M12 21.4l3-3.1 2.2 1.8 2.6-3.7" stroke="#ffb36b" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
             <circle cx="19.9" cy="16.4" r="1.5" fill="#ffb36b" />
           </svg>
-          <div style={{ fontSize: 40, fontWeight: 700, letterSpacing: -1 }}>lavaquant</div>
+          <div style={{ fontSize: 40, fontWeight: 700, letterSpacing: -1 }}>LavaQuant</div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
