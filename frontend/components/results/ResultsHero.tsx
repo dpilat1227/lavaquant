@@ -65,9 +65,8 @@ function buildKpis(m: BacktestResponse["metrics"]): Kpi[] {
       negative: m.ic_ir < 0,
     },
     {
-      key: "IC", label: "IC mean", value: m.ic_mean, format: (v) => v.toFixed(4), lo: 0, hi: 0.05, target: 0.02,
-      caption: "target ≥ 0.02", zone: m.ic_mean < 0 ? "bad" : m.ic_mean < 0.01 ? "warn" : m.ic_mean < 0.02 ? "ok" : "great",
-      negative: m.ic_mean < 0,
+      key: "Avg Turnover", label: "Turnover", value: m.avg_daily_turnover, format: pct(0), lo: 0, hi: 1, target: 0.7,
+      caption: "BRAIN limit 70%", zone: m.avg_daily_turnover < 0.3 ? "great" : m.avg_daily_turnover < 0.7 ? "ok" : m.avg_daily_turnover < 1.2 ? "warn" : "bad",
     },
     {
       key: "Max DD", label: "Max DD", value: m.max_drawdown, format: pct(1), gauge: Math.abs(m.max_drawdown), lo: 0, hi: 0.3, target: 0.2,
@@ -288,7 +287,7 @@ export function ResultsHero({ result, analysis, score, meta }: Props) {
           Sortino <span className="text-gray-300">{m.sortino.toFixed(2)}</span>
         </span>
         <span>
-          Avg turnover <span className="text-gray-300">{(m.avg_daily_turnover * 100).toFixed(1)}%</span>
+          IC mean <span className="text-gray-300">{m.ic_mean.toFixed(4)}</span>
         </span>
         <span>
           IC σ <span className="text-gray-300">{m.ic_std.toFixed(4)}</span>

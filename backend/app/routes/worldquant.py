@@ -104,6 +104,38 @@ async def _fetch_alpha(client: httpx.AsyncClient, alpha_id: str) -> dict[str, An
     return resp.json()
 
 
+async def _yearly(client: httpx.AsyncClient, alpha_id: str) -> list[dict[str, Any]] | None:
+    """BRAIN's per-year table (the IS summary). Best effort: if the recordset isn't there, skip it."""
+    for _ in range(3):
+        try:
+            resp = await client.get(f"{WQ_BASE}/alphas/{alpha_id}/recordsets/yearly-stats", timeout=20.0)
+        except httpx.HTTPError:
+            return None
+        if resp.status_code == 200 and resp.content:
+            try:
+                body = resp.json()
+                names = [p.get("name") for p in (body.get("schema") or {}).get("properties", [])]
+                rows = []
+                for rec in body.get("records", []):
+                    row = dict(zip(names, rec))
+                    rows.append({
+                        "year": str(row.get("year", "")),
+                        "sharpe": row.get("sharpe"),
+                        "turnover": row.get("turnover"),
+                        "fitness": row.get("fitness"),
+                        "returns": row.get("returns"),
+                        "drawdown": row.get("drawdown"),
+                        "margin": row.get("margin"),
+                        "long_count": row.get("longCount"),
+                        "short_count": row.get("shortCount"),
+                    })
+                return rows or None
+            except Exception:  # noqa: BLE001
+                return None
+        await asyncio.sleep(2)
+    return None
+
+
 def _extract_metrics(data: dict[str, Any]) -> dict[str, Any]:
     is_data = data.get("is") or {}
     os_data = data.get("os") or {}
@@ -145,6 +177,7 @@ async def wq_simulate(req: WQSimRequest) -> dict[str, Any]:
             "status": "done",
             "alpha_id": alpha_id,
             "metrics": _extract_metrics(completed),
+            "yearly": await _yearly(client, alpha_id),
             "settings": {
                 "region": req.region,
                 "universe": req.universe,

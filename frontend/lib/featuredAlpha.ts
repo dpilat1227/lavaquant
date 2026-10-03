@@ -107,7 +107,7 @@ function generateFeaturedAlpha(): BacktestResponse {
     },
     ic_series: dates.map((date, i) => ({ date, value: icRaw[i] })),
     equity_curve: dates.map((date, i) => ({ date, value: equityCurve[i + 1] })),
-    daily_pnl: dates.map((date, i) => ({ date, value: equityCurve[i + 1] - equityCurve[i] })),
+    daily_pnl: dates.map((date, i) => ({ date, value: equityCurve[i + 1] / equityCurve[i] - 1 })),
     turnover: dates.map((date, i) => ({ date, value: turnoverSeries[i] })),
     quantile_returns: [
       { quantile: "Q1 (short)", mean_return: -0.00192 },

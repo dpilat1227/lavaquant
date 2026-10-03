@@ -19,12 +19,12 @@ function Cell({
 }: {
   label: string;
   value: number | null;
-  format?: "decimal" | "percent" | "count";
+  format?: "decimal" | "percent" | "count" | "bps";
   good?: boolean | null;
   threshold?: string;
 }) {
   const display =
-    value === null ? "—" : format === "percent" ? `${(value * 100).toFixed(1)}%` : format === "count" ? String(Math.round(value)) : value.toFixed(3);
+    value === null ? "—" : format === "percent" ? `${(value * 100).toFixed(1)}%` : format === "count" ? String(Math.round(value)) : format === "bps" ? `${value.toFixed(2)} bps` : value.toFixed(3);
   const color = good === true ? "text-up" : good === false ? "text-down" : "text-gray-100";
   return (
     <div>
@@ -109,11 +109,40 @@ export function WQResults({ result, expression, onClear }: WQResultsProps) {
           <div className="grid grid-cols-3 gap-x-4 gap-y-4">
             <Cell label="Sharpe (IS)" value={m.sharpe} good={m.sharpe !== null ? m.sharpe > 1 : null} threshold="> 1.0" />
             <Cell label="Returns (IS)" value={m.returns} format="percent" good={m.returns !== null ? m.returns > 0 : null} />
-            <Cell label="Drawdown (IS)" value={m.drawdown} format="percent" good={m.drawdown !== null ? m.drawdown > -0.1 : null} />
+            <Cell label="Drawdown (IS)" value={m.drawdown !== null ? Math.abs(m.drawdown) : null} format="percent" good={m.drawdown !== null ? Math.abs(m.drawdown) < 0.1 : null} />
             <Cell label="Turnover" value={m.turnover} format="percent" good={m.turnover !== null ? m.turnover < 0.7 : null} threshold="< 70%" />
+            <Cell label="Fitness" value={m.fitness} good={m.fitness !== null ? m.fitness >= 1 : null} threshold="> 1.0" />
+            <Cell label="Margin" value={m.margin !== null ? m.margin * 1e4 : null} format="bps" />
             <Cell label="Long" value={m.long_count} format="count" />
             <Cell label="Short" value={m.short_count} format="count" />
           </div>
+
+          {result.yearly && result.yearly.length > 0 && (
+            <div className="mt-4 overflow-x-auto border-t border-white/[0.06] pt-3">
+              <div className="eyebrow mb-2 !text-[9.5px]">By year (BRAIN)</div>
+              <table className="w-full min-w-[420px] text-right font-mono text-[11px] tnum">
+                <thead>
+                  <tr className="text-[9.5px] uppercase tracking-[0.1em] text-gray-500">
+                    {["Year", "Sharpe", "Turnover", "Fitness", "Returns", "Drawdown"].map((h, i) => (
+                      <th key={h} className={`pb-1.5 font-medium ${i === 0 ? "text-left" : ""}`}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {result.yearly.map((y) => (
+                    <tr key={y.year} className="border-t border-white/[0.05]">
+                      <td className="py-1.5 text-left text-gray-300">{y.year}</td>
+                      <td className={`py-1.5 ${(y.sharpe ?? 0) < 0 ? "text-down" : "text-gray-200"}`}>{y.sharpe?.toFixed(2) ?? "—"}</td>
+                      <td className="py-1.5 text-gray-300">{y.turnover !== null ? `${(y.turnover * 100).toFixed(1)}%` : "—"}</td>
+                      <td className={`py-1.5 ${(y.fitness ?? 0) < 0 ? "text-down" : "text-gray-200"}`}>{y.fitness?.toFixed(2) ?? "—"}</td>
+                      <td className={`py-1.5 ${(y.returns ?? 0) < 0 ? "text-down" : "text-gray-200"}`}>{y.returns !== null ? `${(y.returns * 100).toFixed(2)}%` : "—"}</td>
+                      <td className="py-1.5 text-gray-300">{y.drawdown !== null ? `${(y.drawdown * 100).toFixed(2)}%` : "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           {(m.os_fitness !== null || m.os_sharpe !== null) && (
             <div className="mt-4 grid grid-cols-2 gap-4 border-t border-white/[0.06] pt-4">

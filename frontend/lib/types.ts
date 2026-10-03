@@ -118,10 +118,23 @@ export interface WQMetrics {
   os_sharpe: number | null;
 }
 
+export interface WQYearRow {
+  year: string;
+  sharpe: number | null;
+  turnover: number | null;
+  fitness: number | null;
+  returns: number | null;
+  drawdown: number | null;
+  margin: number | null;
+  long_count: number | null;
+  short_count: number | null;
+}
+
 export interface WQSimResult {
   status: "done" | "pending" | "submitted" | "error";
   alpha_id: string | null;
   metrics: WQMetrics | null;
+  yearly?: WQYearRow[] | null;
   settings?: {
     region: string;
     universe: string;

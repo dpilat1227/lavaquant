@@ -10,6 +10,7 @@ import { QuantileChart } from "./QuantileChart";
 import { FeatureImportanceChart } from "./FeatureImportanceChart";
 import { PlatformFit } from "./PlatformFit";
 import { MonthlyHeatmap } from "./MonthlyHeatmap";
+import { YearlyTable } from "./YearlyTable";
 import { Insights, Regimes } from "./Insights";
 import { analyzeResult } from "@/lib/analysis";
 import { computeScore } from "@/lib/score";
@@ -110,6 +111,10 @@ export function ResultsPanel({ result, meta = { source: "live" } }: ResultsPanel
         <div className="reveal flex flex-col [&>*]:flex-1" style={d(10)}>
           <Regimes regimes={analysis.regimes} />
         </div>
+      </div>
+
+      <div className="reveal" style={d(10)}>
+        <YearlyTable result={result} />
       </div>
 
       <div className="reveal" style={d(11)}>
