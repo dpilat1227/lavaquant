@@ -28,9 +28,9 @@ export const METRICS: MetricDoc[] = [
     name: "IC Information Ratio",
     formula: "mean(IC) / std(IC)",
     color: "text-lava-400",
-    threshold: "> 0.5 solid · > 1.0 excellent",
-    short: "Consistency of the signal: average IC divided by how much IC varies day to day. Higher means more reliable.",
-    long: "IC tells you how good the signal is on average. IC-IR tells you how dependable it is. A signal with modest IC but a very steady IC-IR can beat a flashy one that swings between strong and useless. This is the daily ratio, not annualized.",
+    threshold: "> 0.1 solid · > 0.2 excellent (daily)",
+    short: "Consistency of the signal: average IC divided by how much IC varies day to day. Daily IC is noisy, so 0.1 is already good.",
+    long: "IC tells you how good the signal is on average. IC-IR tells you how dependable it is. This is the daily ratio, mean(IC) / std(IC). Daily cross-sectional IC is very noisy (a standard deviation near 0.2 is normal on ~100 stocks), so real alphas score around 0.05 to 0.15. Multiply by √252 to annualize: 0.1 daily is about 1.6 annualized.",
   },
   {
     key: "Sharpe",
@@ -110,7 +110,7 @@ export const METRICS: MetricDoc[] = [
     color: "text-lava-300",
     threshold: "Heuristic, not an industry metric",
     short: "A transparent 0 to 100 summary: Sharpe 30%, IC-IR 25%, IC 15%, hit rate 10%, drawdown 10%, turnover 10%.",
-    long: "Each component is scaled so a strong value earns full marks (Sharpe 2.5, IC-IR 1.0, IC 0.04, hit rate 70%, zero drawdown, turnover at or below 15%). It exists to make results comparable at a glance. It is not a WorldQuant, Numerai or academic metric.",
+    long: "Each component is scaled so a strong value earns full marks (Sharpe 2.5, IC-IR 0.2, IC 0.04, hit rate 60%, zero drawdown, turnover at or below 15%). It exists to make results comparable at a glance. It is not a WorldQuant, Numerai or academic metric.",
   },
 ];
 

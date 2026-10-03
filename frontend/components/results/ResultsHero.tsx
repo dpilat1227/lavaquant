@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy, Link2, Sparkles } from "lucide-react";
+import { BookmarkCheck, Check, Copy, Link2, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Panel } from "@/components/ui/Panel";
 import { InfoTip } from "@/components/ui/InfoTip";
@@ -14,6 +14,7 @@ import { emit, toast } from "@/lib/bus";
 import type { Score } from "@/lib/score";
 import type { SignalAnalysis, SignalTag } from "@/lib/analysis";
 import type { BacktestResponse } from "@/lib/types";
+import type { ResultMeta } from "@/lib/bus";
 
 type Zone = "bad" | "warn" | "ok" | "great";
 const ZONE: Record<Zone, string> = { bad: "#ff5470", warn: "#ffc857", ok: "#7cc4ff", great: "#3ddc97" };
@@ -59,8 +60,8 @@ function buildKpis(m: BacktestResponse["metrics"]): Kpi[] {
       negative: m.annual_return < 0,
     },
     {
-      key: "IC-IR", label: "IC-IR", value: m.ic_ir, format: (v) => v.toFixed(2), lo: 0, hi: 1, target: 0.5,
-      caption: "target ≥ 0.5", zone: m.ic_ir < 0 ? "bad" : m.ic_ir < 0.3 ? "warn" : m.ic_ir < 0.5 ? "ok" : "great",
+      key: "IC-IR", label: "IC-IR", value: m.ic_ir, format: (v) => v.toFixed(2), lo: 0, hi: 0.2, target: 0.1,
+      caption: "target ≥ 0.1", zone: m.ic_ir < 0 ? "bad" : m.ic_ir < 0.05 ? "warn" : m.ic_ir < 0.1 ? "ok" : "great",
       negative: m.ic_ir < 0,
     },
     {
@@ -129,10 +130,11 @@ interface Props {
   result: BacktestResponse;
   analysis: SignalAnalysis;
   score: Score;
-  sample: boolean;
+  meta: ResultMeta;
 }
 
-export function ResultsHero({ result, analysis, score, sample }: Props) {
+export function ResultsHero({ result, analysis, score, meta }: Props) {
+  const sample = meta.source === "sample";
   const m = result.metrics;
   const kpis = buildKpis(m);
   const [copied, setCopied] = useState(false);
@@ -166,6 +168,15 @@ export function ResultsHero({ result, analysis, score, sample }: Props) {
               <TooltipContent>
                 This preloaded result is generated from synthetic data to show what the dashboard looks like. Run a backtest on the left for real numbers.
               </TooltipContent>
+            </Tooltip>
+          ) : meta.source === "saved" ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex cursor-help items-center gap-2 rounded-full border border-sky-400/30 bg-sky-400/10 px-3 py-1 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-sky-300">
+                  <BookmarkCheck className="h-3 w-3" /> Saved backtest · {meta.note}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>A real backtest saved from the engine, so it loads instantly. The shaded part of the equity curve is the holdout period the alpha was never selected on.</TooltipContent>
             </Tooltip>
           ) : (
             <span className="flex items-center gap-2 rounded-full border border-up/25 bg-up/10 px-3 py-1 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-up">

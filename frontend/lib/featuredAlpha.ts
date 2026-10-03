@@ -36,13 +36,19 @@ function generateFeaturedAlpha(): BacktestResponse {
   const dates = tradingDates("2020-01-02", "2024-12-31");
   const n = dates.length;
 
-  // IC series: AR(1) — stationary mean ~0.026, std ~0.040
+  // IC series: AR(1), stationary mean ~0.023, std ~0.20 (daily cross-sectional IC on ~100 stocks is this noisy)
   const icRaw: number[] = [];
   let prev = 0;
   for (let i = 0; i < n; i++) {
-    const shock = boxMuller(r, 0, 0.0394);
-    prev = 0.18 * prev + 0.02132 + shock;
+    const shock = boxMuller(r, 0, 0.199);
+    prev = 0.1 * prev + 0.0207 + shock;
     icRaw.push(prev);
+  }
+  // Pin the realized series to its targets so the headline stats match what the sample claims.
+  {
+    const m = icRaw.reduce((a, b) => a + b, 0) / n;
+    const sd = Math.sqrt(icRaw.reduce((a, v) => a + (v - m) ** 2, 0) / (n - 1));
+    for (let i = 0; i < n; i++) icRaw[i] = ((icRaw[i] - m) / sd) * 0.2 + 0.023;
   }
 
   // Equity curve: daily L/S PnL, in %-units (divided by 100 when applied).

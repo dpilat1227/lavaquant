@@ -1,13 +1,15 @@
 "use client";
 
 import { useMemo } from "react";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ReferenceDot } from "recharts";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ReferenceDot, ReferenceArea } from "recharts";
 import { ChartTip } from "./ChartTip";
 import { clean, drawdownSeries, longDate, yearLabel, yearTicks } from "@/lib/derive";
 import type { TimeSeriesPoint } from "@/lib/types";
 
 interface EquityChartProps {
   data: TimeSeriesPoint[];
+  /** Shade everything from this date on as out-of-sample */
+  holdoutFrom?: string;
 }
 
 const AXIS = { fill: "#8d8d97", fontSize: 10.5 };
@@ -24,7 +26,7 @@ interface Row {
 const pct = (v: number, d = 1) => `${v >= 0 ? "+" : ""}${(v * 100).toFixed(d)}%`;
 
 /** Equity curve with a synced underwater (drawdown) chart beneath it. */
-export function EquityChart({ data }: EquityChartProps) {
+export function EquityChart({ data, holdoutFrom }: EquityChartProps) {
   const rows = useMemo<Row[]>(() => {
     const eq = clean(data);
     const dd = drawdownSeries(eq);
@@ -33,6 +35,7 @@ export function EquityChart({ data }: EquityChartProps) {
   }, [data]);
 
   const ticks = useMemo(() => yearTicks(rows), [rows]);
+  const holdoutStart = useMemo(() => (holdoutFrom ? rows.find((r) => r.date >= holdoutFrom)?.date : undefined), [rows, holdoutFrom]);
   const trough = useMemo(() => rows.reduce((a, r) => (r.dd < a.dd ? r : a), rows[0]), [rows]);
   if (!rows.length) return null;
 
@@ -66,6 +69,16 @@ export function EquityChart({ data }: EquityChartProps) {
             tickCount={5}
             tickFormatter={(v: number) => (Math.abs(v) >= 50 ? v.toFixed(0) : v.toFixed(2))}
           />
+          {holdoutStart && (
+            <ReferenceArea
+              x1={holdoutStart}
+              x2={rows[rows.length - 1].date}
+              fill="rgba(255,255,255,0.05)"
+              stroke="rgba(255,255,255,0.14)"
+              strokeDasharray="3 3"
+              label={{ value: "HOLDOUT · NOT USED FOR SELECTION", position: "insideTopLeft", fill: "#a1a1aa", fontSize: 9.5, letterSpacing: 1 }}
+            />
+          )}
           <ReferenceLine y={base} stroke="rgba(255,255,255,0.18)" strokeDasharray="4 4" />
           <Tooltip
             cursor={{ stroke: "rgba(255,255,255,0.28)", strokeDasharray: "3 3" }}

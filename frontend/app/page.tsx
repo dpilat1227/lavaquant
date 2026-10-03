@@ -15,6 +15,8 @@ import { TopBar } from "@/components/shell/TopBar";
 import { CommandPalette } from "@/components/shell/CommandPalette";
 import { FEATURED_ALPHA } from "@/lib/featuredAlpha";
 import { emit, toast, useBus } from "@/lib/bus";
+import type { ResultMeta } from "@/lib/bus";
+import { GalleryPanel } from "@/components/shell/GalleryPanel";
 import { buildAlphaLink, buildSummary, copyText } from "@/lib/share";
 import type { BacktestResponse } from "@/lib/types";
 
@@ -32,6 +34,8 @@ function isTypingTarget(t: EventTarget | null): boolean {
 export default function Home() {
   const [result, setResult] = useState<BacktestResponse | null>(null);
   const [resultKey, setResultKey] = useState(0);
+  const [meta, setMeta] = useState<ResultMeta>({ source: "sample" });
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingLabel, setLoadingLabel] = useState("Running backtest");
   const [error, setError] = useState("");
@@ -87,6 +91,13 @@ export default function Home() {
   useBus("open-palette", () => setPaletteOpen(true));
   useBus("open-docs", (d) => setDocs({ open: true, tab: d?.tab, focus: d?.focus, query: d?.query }));
   useBus("open-history", () => setHistoryOpen(true));
+  useBus("open-gallery", () => setGalleryOpen(true));
+  useBus("show-result", (d) => {
+    setResult(d.result);
+    setMeta(d.meta);
+    setResultKey((k) => k + 1);
+    setError("");
+  });
   useBus("open-about", () => landing.show());
   useBus("copy-link", async () => {
     const expr = result?.expression;
@@ -140,6 +151,7 @@ export default function Home() {
             <StrategyBuilder
               onResult={(r) => {
                 setResult(r);
+                setMeta({ source: "live" });
                 setResultKey((k) => k + 1);
                 setError("");
               }}
@@ -173,7 +185,7 @@ export default function Home() {
               {loading ? (
                 <ResultsSkeleton label={loadingLabel} />
               ) : result ? (
-                <ResultsPanel key={resultKey} result={result} sample={result === FEATURED_ALPHA} />
+                <ResultsPanel key={resultKey} result={result} meta={meta} />
               ) : null}
             </div>
           </section>
@@ -189,6 +201,7 @@ export default function Home() {
             emit("load-expression", expr);
           }}
         />
+        <GalleryPanel open={galleryOpen} onClose={() => setGalleryOpen(false)} />
         <LandingModal open={landing.open} onDismiss={landing.dismiss} />
         <Toaster />
       </div>
@@ -213,7 +226,7 @@ function MobileView() {
             The editor and workbench need a larger screen. Here is a sample result from the platform; open this page on a laptop to write and backtest your own alphas.
           </div>
           <div className="canvas">
-            <ResultsPanel result={FEATURED_ALPHA} sample />
+            <ResultsPanel result={FEATURED_ALPHA} meta={{ source: "sample" }} />
           </div>
         </div>
         <Toaster />

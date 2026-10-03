@@ -2,6 +2,15 @@
 
 import { useEffect, useRef } from "react";
 
+/** Where the result on screen came from, so the UI can label it honestly. */
+export interface ResultMeta {
+  source: "sample" | "live" | "saved";
+  /** First date of the out-of-sample period, shaded on the equity chart */
+  holdoutFrom?: string;
+  /** Human-readable context for saved results, e.g. "US equities · 2020–2024" */
+  note?: string;
+}
+
 /** Minimal typed event bus so the command palette, top bar and workbench can talk without prop drilling. */
 export interface BusEvents {
   run: undefined;
@@ -10,6 +19,8 @@ export interface BusEvents {
   "insert-text": string;
   "open-docs": { tab?: string; focus?: string; query?: string } | undefined;
   "open-history": undefined;
+  "open-gallery": undefined;
+  "show-result": { result: import("./types").BacktestResponse; meta: ResultMeta };
   "open-palette": undefined;
   "open-about": undefined;
   "set-mode": "expression" | "ml";

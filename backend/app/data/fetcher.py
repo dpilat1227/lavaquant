@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import time
 import hashlib
 import logging
 from pathlib import Path
@@ -33,6 +34,60 @@ def _is_cache_fresh(path: Path, max_age_hours: int = 12) -> bool:
     return age < timedelta(hours=max_age_hours)
 
 
+# A cached or downloaded frame must cover most of the requested universe to be trusted.
+MIN_TICKER_SHARE_TO_CACHE = 0.9
+MIN_TICKER_SHARE_TO_USE = 0.5
+MIN_TICKERS_TO_USE = 10
+
+
+def _close_frame(raw: pd.DataFrame, tickers: list[str]) -> pd.DataFrame:
+    if isinstance(raw.columns, pd.MultiIndex):
+        close = raw["Close"] if "Close" in raw.columns.get_level_values(0) else pd.DataFrame(index=raw.index)
+    else:
+        close = raw[["Close"]] if "Close" in raw.columns else pd.DataFrame(index=raw.index)
+    return close.reindex(columns=tickers)
+
+
+def _good_tickers(raw: pd.DataFrame, tickers: list[str]) -> list[str]:
+    """Tickers with at least 70% of their price history present."""
+    share = _close_frame(raw, tickers).notna().mean()
+    return [t for t in tickers if float(share.get(t, 0.0)) >= 0.7]
+
+
+def _download(tickers: list[str], start: str, end: str, threads: bool) -> pd.DataFrame:
+    raw = yf.download(tickers, start=start, end=end, auto_adjust=True, progress=False, threads=threads)
+    if not raw.empty and not isinstance(raw.columns, pd.MultiIndex):
+        raw.columns = pd.MultiIndex.from_product([raw.columns, tickers[:1]])
+    return raw
+
+
+def _download_with_retries(tickers: list[str], start: str, end: str) -> pd.DataFrame:
+    """Bulk download, then re-fetch any tickers Yahoo skipped in small sequential batches."""
+    raw = _download(tickers, start, end, threads=True)
+    good = _good_tickers(raw, tickers) if not raw.empty else []
+    for _ in range(2):
+        missing = [t for t in tickers if t not in good]
+        if not missing:
+            break
+        time.sleep(1.5)
+        parts = []
+        for i in range(0, len(missing), 20):
+            chunk = missing[i : i + 20]
+            try:
+                part = _download(chunk, start, end, threads=False)
+            except Exception as e:  # noqa: BLE001
+                logger.warning(f"Retry batch failed: {e}")
+                continue
+            if not part.empty:
+                parts.append(part)
+            time.sleep(0.5)
+        if parts:
+            keep = raw.loc[:, raw.columns.get_level_values(1).isin(good)] if not raw.empty else raw
+            raw = pd.concat([keep, *parts], axis=1) if not keep.empty else pd.concat(parts, axis=1)
+            good = _good_tickers(raw, tickers)
+    return raw
+
+
 def fetch_price_data(
     universe: str,
     start_date: str,
@@ -47,22 +102,31 @@ def fetch_price_data(
     cache_key = _cache_key(tickers, start_date, end_date)
     cache_path = CACHE_DIR / f"{cache_key}.parquet"
 
+    raw = None
     if _is_cache_fresh(cache_path):
-        logger.info(f"Cache hit: {cache_path}")
-        raw = pd.read_parquet(cache_path)
-    else:
+        cached = pd.read_parquet(cache_path)
+        if len(_good_tickers(cached, tickers)) >= MIN_TICKER_SHARE_TO_CACHE * len(tickers):
+            logger.info(f"Cache hit: {cache_path}")
+            raw = cached
+        else:
+            logger.warning(f"Discarding incomplete cache {cache_path}")
+            cache_path.unlink(missing_ok=True)
+
+    if raw is None:
         logger.info(f"Fetching {len(tickers)} tickers from {start_date} to {end_date}")
-        raw = yf.download(
-            tickers,
-            start=start_date,
-            end=end_date,
-            auto_adjust=True,
-            progress=False,
-            threads=True,
-        )
+        raw = _download_with_retries(tickers, start_date, end_date)
         if raw.empty:
             raise ValueError("No data returned from yfinance")
-        raw.to_parquet(cache_path)
+        n_good = len(_good_tickers(raw, tickers))
+        if n_good < max(MIN_TICKERS_TO_USE, MIN_TICKER_SHARE_TO_USE * len(tickers)):
+            raise ValueError(
+                f"Yahoo Finance returned usable data for only {n_good} of {len(tickers)} tickers "
+                f"for {start_date} to {end_date}. It may be rate limiting this server; try again in a minute."
+            )
+        if n_good >= MIN_TICKER_SHARE_TO_CACHE * len(tickers):
+            raw.to_parquet(cache_path)
+        else:
+            logger.warning(f"Partial data ({n_good}/{len(tickers)} tickers); not caching")
 
     return _build_feature_matrices(raw, tickers)
 

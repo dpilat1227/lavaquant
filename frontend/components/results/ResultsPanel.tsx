@@ -15,15 +15,16 @@ import { analyzeResult } from "@/lib/analysis";
 import { computeScore } from "@/lib/score";
 import { clean, quantileStats } from "@/lib/derive";
 import type { BacktestResponse } from "@/lib/types";
+import type { ResultMeta } from "@/lib/bus";
 
 interface ResultsPanelProps {
   result: BacktestResponse;
-  sample?: boolean;
+  meta?: ResultMeta;
 }
 
 const d = (i: number) => ({ ["--i" as string]: i });
 
-export function ResultsPanel({ result, sample = false }: ResultsPanelProps) {
+export function ResultsPanel({ result, meta = { source: "live" } }: ResultsPanelProps) {
   const { ic_series, equity_curve, quantile_returns, feature_importance } = result;
 
   const analysis = useMemo(() => analyzeResult(result), [result]);
@@ -36,7 +37,7 @@ export function ResultsPanel({ result, sample = false }: ResultsPanelProps) {
 
   return (
     <div className="space-y-4 pb-24">
-      <ResultsHero result={result} analysis={analysis} score={score} sample={sample} />
+      <ResultsHero result={result} analysis={analysis} score={score} meta={meta} />
 
       <div className="grid-2-1">
         {equity_curve.length > 0 && (
@@ -55,7 +56,7 @@ export function ResultsPanel({ result, sample = false }: ResultsPanelProps) {
               }
             />
             <div className="px-3 pb-4">
-              <EquityChart data={equity_curve} />
+              <EquityChart data={equity_curve} holdoutFrom={meta.holdoutFrom} />
             </div>
           </Panel>
         )}

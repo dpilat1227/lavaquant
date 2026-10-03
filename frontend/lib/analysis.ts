@@ -72,8 +72,8 @@ export function classifySignal(
   // IC consistency
   const icValues = icSeries.map((p) => p.value).filter((v): v is number => v !== null);
   const icStd = stdDev(icValues);
-  if (icir > 0.5) tags.push({ label: "Consistent", color: "emerald" });
-  else if (Math.abs(ic) > 0 && icStd > 0.15) tags.push({ label: "Volatile IC", color: "amber" });
+  if (icir > 0.1) tags.push({ label: "Consistent", color: "emerald" });
+  else if (Math.abs(ic) > 0 && icStd > 0.3) tags.push({ label: "Volatile IC", color: "amber" });
 
   return tags.slice(0, 4); // cap at 4 tags
 }
@@ -109,11 +109,11 @@ export function generateDiagnosis(
   }
 
   // IC-IR (consistency)
-  if (Math.abs(ic_ir) < 0.3) {
+  if (Math.abs(ic_ir) < 0.05) {
     lines.push(
       `IC-IR of ${fmt2(ic_ir)} signals low consistency — the alpha's predictive power varies substantially across time periods. Purging look-ahead bias or extending the lookback window may stabilize it.`
     );
-  } else if (ic_ir > 0.5) {
+  } else if (ic_ir > 0.1) {
     lines.push(
       `IC-IR of ${fmt2(ic_ir)} indicates the signal is consistent across periods, a key criterion for Numerai and WorldQuant BRAIN submissions.`
     );
@@ -147,7 +147,7 @@ export function generateDiagnosis(
 
   // Headline
   let headline = "";
-  if (ic_ir > 0.5 && ic_mean > 0.02) headline = "Competitive signal with strong consistency";
+  if (ic_ir > 0.1 && ic_mean > 0.02) headline = "Competitive signal with strong consistency";
   else if (ic_mean < -0.01) headline = "Inverse relationship detected — consider negating";
   else if (Math.abs(ic_mean) < 0.005) headline = "Signal is statistically indistinguishable from noise";
   else if (sharpe < -0.5) headline = "Negative Sharpe in trending market — factor regime mismatch likely";
@@ -195,9 +195,9 @@ export function computeBenchmarks(metrics: BacktestMetrics): CompetitiveBenchmar
       platform: "Numerai",
       metric: "IC-IR",
       yourValue: metrics.ic_ir,
-      threshold: 0.5,
-      description: "Rule of thumb: IC-IR above ~0.5 suggests a steady signal. Numerai rewards consistency, but this is not an official Numerai cutoff.",
-      passes: metrics.ic_ir > 0.5,
+      threshold: 0.1,
+      description: "Rule of thumb on the daily series: IC-IR above ~0.1 (about 1.6 annualized) suggests a steady signal. Numerai rewards consistency, but this is not an official Numerai cutoff.",
+      passes: metrics.ic_ir > 0.1,
     },
     {
       platform: "WorldQuant",
@@ -238,7 +238,7 @@ export function generateSuggestions(metrics: BacktestMetrics, expression?: strin
   if (!expr.includes("group_neutral") && !expr.includes("sector")) {
     suggestions.push("Add sector neutralization: group_neutralize(·, sector)");
   }
-  if (metrics.ic_ir < 0.3 && !expr.includes("ts_mean")) {
+  if (metrics.ic_ir < 0.05 && !expr.includes("ts_mean")) {
     suggestions.push("Smooth the signal: ts_mean(·, 5) can reduce IC volatility");
   }
   if (Math.abs(metrics.ic_mean) < 0.005) {

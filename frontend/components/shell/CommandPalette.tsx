@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  BookOpen, Braces, Brain, Clock, CornerDownLeft, FlaskConical, Hash, Link2, Play, Search, Sigma, Sparkles, Wand2, ClipboardCopy, Info, Layers,
+  BookOpen, Braces, Brain, Clock, Trophy, CornerDownLeft, FlaskConical, Hash, Link2, Play, Search, Sigma, Sparkles, Wand2, ClipboardCopy, Info, Layers,
 } from "lucide-react";
 import { DEFAULT_EXAMPLES, DSL_FIELDS, DSL_FUNCTIONS } from "@/lib/dsl";
 import { METRICS } from "@/lib/metrics";
@@ -61,6 +61,7 @@ export function CommandPalette({ open, onClose, mod }: { open: boolean; onClose:
       { id: "mode-ml", group: "Actions", title: "Switch to ML model", keywords: "lightgbm machine learning mode", icon: <Layers className={ic} />, run: act(() => emit("set-mode", "ml")) },
       { id: "link", group: "Actions", title: "Copy shareable link", hint: "this alpha", keywords: "share url", icon: <Link2 className={ic} />, run: act(() => emit("copy-link")) },
       { id: "summary", group: "Actions", title: "Copy results summary", hint: "plain text", keywords: "share export clipboard", icon: <ClipboardCopy className={ic} />, run: act(() => emit("copy-summary")) },
+      { id: "gallery", group: "Actions", title: "Open alpha gallery", hint: "best alphas", keywords: "curated best top ranked saved results leaderboard", icon: <Trophy className={ic} />, run: act(() => emit("open-gallery")) },
       { id: "history", group: "Actions", title: "Open alpha history", keywords: "past runs saved", icon: <Clock className={ic} />, run: act(() => emit("open-history")) },
       { id: "docs", group: "Actions", title: "Open docs", keywords: "reference help glossary", icon: <BookOpen className={ic} />, run: act(() => emit("open-docs")) },
       { id: "about", group: "Actions", title: "About lavaquant", keywords: "intro welcome author", icon: <Info className={ic} />, run: act(() => emit("open-about")) },

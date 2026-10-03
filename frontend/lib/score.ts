@@ -28,9 +28,9 @@ const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
 export function computeScore(m: BacktestMetrics): Score {
   const parts: ScorePart[] = [
     { key: "sharpe", label: "Sharpe", weight: 0.3, value: clamp01(m.sharpe / 2.5), detail: "2.5 = full marks" },
-    { key: "icir", label: "IC-IR", weight: 0.25, value: clamp01(m.ic_ir / 1.0), detail: "1.0 = full marks" },
+    { key: "icir", label: "IC-IR", weight: 0.25, value: clamp01(m.ic_ir / 0.2), detail: "0.2 = full marks" },
     { key: "ic", label: "IC strength", weight: 0.15, value: clamp01(m.ic_mean / 0.04), detail: "0.04 = full marks" },
-    { key: "hit", label: "Hit rate", weight: 0.1, value: clamp01((m.hit_rate - 0.5) / 0.2), detail: "70% = full marks" },
+    { key: "hit", label: "Hit rate", weight: 0.1, value: clamp01((m.hit_rate - 0.5) / 0.1), detail: "60% = full marks" },
     { key: "dd", label: "Drawdown", weight: 0.1, value: clamp01(1 - Math.abs(m.max_drawdown) / 0.3), detail: "0% = full marks" },
     { key: "turn", label: "Turnover", weight: 0.1, value: clamp01(1 - (m.avg_daily_turnover - 0.15) / 0.45), detail: "≤15% = full marks" },
   ];
