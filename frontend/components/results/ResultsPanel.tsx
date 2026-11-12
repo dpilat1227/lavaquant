@@ -11,6 +11,7 @@ import { FeatureImportanceChart } from "./FeatureImportanceChart";
 import { PlatformFit } from "./PlatformFit";
 import { MonthlyHeatmap } from "./MonthlyHeatmap";
 import { YearlyTable } from "./YearlyTable";
+import { RiskSection } from "./RiskPanel";
 import { Insights, Regimes } from "./Insights";
 import { analyzeResult } from "@/lib/analysis";
 import { computeScore } from "@/lib/score";
@@ -116,6 +117,8 @@ export function ResultsPanel({ result, meta = { source: "live" } }: ResultsPanel
       <div className="reveal" style={d(10)}>
         <YearlyTable result={result} />
       </div>
+
+      {result.risk && <RiskSection risk={result.risk} />}
 
       <div className="reveal" style={d(11)}>
         <Insights analysis={analysis} />

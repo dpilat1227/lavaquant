@@ -12,6 +12,8 @@ import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
 
+from .risk import compute_risk
+
 
 def run_backtest(
     alpha: pd.DataFrame,
@@ -80,6 +82,7 @@ def run_backtest(
         "turnover": _to_records(turnover.rename("turnover")),
         "quantile_returns": quantile_returns,
         "metrics": metrics,
+        "risk": compute_risk(daily_pnl),
     }
 
 

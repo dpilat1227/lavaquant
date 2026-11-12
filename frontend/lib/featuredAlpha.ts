@@ -2,7 +2,10 @@
  * Pre-loaded demo result for the landing experience.
  * All data is deterministic and generated client-side — no API needed.
  */
-import type { BacktestResponse } from "./types";
+import type { BacktestResponse, RiskReport } from "./types";
+// Computed by the backend's risk module from this series. Regenerate it when the generator below changes;
+// the command is in scripts/dump-featured.mjs.
+import featuredRisk from "./featuredRisk.json";
 
 // Seeded LCG — deterministic, same output on every run
 function makePrng(seed: number) {
@@ -116,6 +119,7 @@ function generateFeaturedAlpha(): BacktestResponse {
       { quantile: "Q4", mean_return: 0.00094 },
       { quantile: "Q5 (long)", mean_return: 0.00231 },
     ],
+    risk: featuredRisk as unknown as RiskReport,
     expression: "group_neutralize(rank(-returns), sector)",
     elapsed_seconds: 0,
   };

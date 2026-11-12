@@ -48,6 +48,92 @@ class QuantileReturn(BaseModel):
     mean_return: float
 
 
+class MethodRow(BaseModel):
+    """One confidence level, with the figure from each estimation method (positive losses)."""
+
+    confidence: float
+    historical: Optional[float] = None
+    gaussian: float
+    monte_carlo: float
+    bootstrap: Optional[float] = None
+
+
+class RiskDistribution(BaseModel):
+    mean: float
+    std: float
+    annual_vol: float
+    skew: float
+    excess_kurtosis: float
+    worst_day: float
+    best_day: float
+    t_df: float
+
+
+class RiskHorizon(BaseModel):
+    days: int
+    var: list[MethodRow]
+    cvar: list[MethodRow]
+
+
+class VarBacktestRow(BaseModel):
+    confidence: float
+    window: int
+    observations: int
+    expected: float
+    exceptions: int
+    rate: float
+    kupiec_p: float
+    independence_p: float
+    verdict: Literal["pass", "too_many", "too_few", "clustered"]
+
+
+class RiskSeriesPoint(BaseModel):
+    date: str
+    pnl: float
+    var95: Optional[float] = None
+    var99: Optional[float] = None
+
+
+class WorstStretch(BaseModel):
+    days: int
+    # `return` is a Python keyword, so the field is aliased
+    ret: float = Field(alias="return")
+    start: str
+    end: str
+
+
+class StressWindow(BaseModel):
+    name: str
+    start: str
+    end: str
+    days: int
+    ret: float = Field(alias="return")
+
+
+class VolShock(BaseModel):
+    multiple: float
+    confidence: float
+    var: float
+    cvar: float
+
+
+class StressReport(BaseModel):
+    worst_stretches: list[WorstStretch]
+    windows: list[StressWindow]
+    vol_shocks: list[VolShock]
+
+
+class RiskReport(BaseModel):
+    n_obs: int
+    distribution: RiskDistribution
+    var: list[MethodRow]
+    cvar: list[MethodRow]
+    horizon: RiskHorizon
+    backtest: list[VarBacktestRow]
+    series: list[RiskSeriesPoint]
+    stress: StressReport
+
+
 class BacktestResponse(BaseModel):
     metrics: MetricsResponse
     ic_series: list[TimeSeriesPoint]
@@ -55,6 +141,7 @@ class BacktestResponse(BaseModel):
     daily_pnl: list[TimeSeriesPoint]
     turnover: list[TimeSeriesPoint]
     quantile_returns: list[QuantileReturn]
+    risk: Optional[RiskReport] = None
 
 
 class MLBacktestResponse(BacktestResponse):

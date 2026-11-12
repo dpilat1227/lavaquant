@@ -18,6 +18,7 @@ Type an alpha like `group_neutralize(rank(-returns), sector)`, hit run, get IC, 
 - Backtests on an S&P 500 sample, sector ETFs, forex and commodities
 - Optional submit to WorldQuant BRAIN to compare scores
 - LightGBM / ridge models with time-series CV
+- Risk: VaR and CVaR three ways, a rolling VaR backtest, and stress scenarios (see below)
 - Cmd+K palette, and shareable links (`?alpha=...`) that open and run an alpha
 
 ## Metrics
@@ -32,6 +33,18 @@ Full definitions are in the app under Docs.
 | Turnover | Share of the book traded per day |
 | Fitness (est.) | Sharpe × √(\|return\| / max(turnover, 0.125)), WorldQuant's formula on local numbers |
 | Score | 0-100 blend of the above. My own heuristic, not an industry metric |
+| VaR / CVaR | Daily loss a bad day should not beat at 95% and 99%, and the average loss on the days that do |
+
+## Risk
+
+Every backtest also gets a risk report, computed from the portfolio's daily P&L (`backend/app/engine/risk.py`):
+
+- **VaR and CVaR** at 95% and 99%: historical, Gaussian, and Monte Carlo from a fitted Student-t. The gap between the Gaussian and the others is the fat-tail effect.
+- **10-day horizon** VaR and CVaR by resampling days, Gaussian √time scaling, and Monte Carlo.
+- **VaR backtest:** a historical VaR rolled forward daily from the prior 250 days, with a Kupiec test (do breaches come as often as promised?) and a Christoffersen test (do they bunch together?).
+- **Stress:** the worst 1-day, 1-week, 1-month and 3-month stretches, how the strategy did in named market-stress windows the backtest covers (COVID, 2022, March 2023), and VaR at 1.5×, 2× and 3× volatility.
+
+Multi-day figures treat days as independent, and the named windows are market episodes, not shocks to this strategy's own factors. The gallery files and the sample result carry a precomputed report. After changing either, refresh it with `backend/scripts/backfill_risk.py` (the command for the sample is in `frontend/scripts/dump-featured.mjs`).
 
 Worth knowing:
 
@@ -61,6 +74,13 @@ npm run dev
 ```
 
 Frontend is on :3000, backend on :8000.
+
+Backend tests (the risk module, against closed-form and textbook values):
+
+```bash
+cd backend
+.venv/bin/python -m unittest discover -s tests -t .
+```
 
 ## Deploy
 

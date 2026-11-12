@@ -47,6 +47,60 @@ export interface FeatureImportance {
   importance: number;
 }
 
+/** One confidence level with the figure from each estimation method. Losses are positive fractions of NAV. */
+export interface RiskMethodRow {
+  confidence: number;
+  historical?: number;
+  gaussian: number;
+  monte_carlo: number;
+  bootstrap?: number;
+}
+
+export type VarVerdict = "pass" | "too_many" | "too_few" | "clustered";
+
+export interface VarBacktestRow {
+  confidence: number;
+  window: number;
+  observations: number;
+  expected: number;
+  exceptions: number;
+  rate: number;
+  kupiec_p: number;
+  independence_p: number;
+  verdict: VarVerdict;
+}
+
+export interface RiskSeriesPoint {
+  date: string;
+  pnl: number;
+  var95?: number;
+  var99?: number;
+}
+
+export interface RiskReport {
+  n_obs: number;
+  distribution: {
+    mean: number;
+    std: number;
+    annual_vol: number;
+    skew: number;
+    excess_kurtosis: number;
+    worst_day: number;
+    best_day: number;
+    t_df: number;
+  };
+  var: RiskMethodRow[];
+  cvar: RiskMethodRow[];
+  horizon: { days: number; var: RiskMethodRow[]; cvar: RiskMethodRow[] };
+  backtest: VarBacktestRow[];
+  series: RiskSeriesPoint[];
+  stress: {
+    worst_stretches: { days: number; return: number; start: string; end: string }[];
+    windows: { name: string; start: string; end: string; days: number; return: number }[];
+    vol_shocks: { multiple: number; confidence: number; var: number; cvar: number }[];
+  };
+}
+
 export interface BacktestResponse {
   metrics: BacktestMetrics;
   ic_series: TimeSeriesPoint[];
@@ -54,6 +108,8 @@ export interface BacktestResponse {
   daily_pnl: TimeSeriesPoint[];
   turnover: TimeSeriesPoint[];
   quantile_returns: QuantileReturn[];
+  /** Absent on results saved before the risk module, and when there is too little history */
+  risk?: RiskReport | null;
   feature_importance?: FeatureImportance[];
   expression?: string;
   elapsed_seconds: number;
