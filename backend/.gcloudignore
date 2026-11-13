@@ -1,0 +1,10 @@
+# Upload only what the Dockerfile copies (Dockerfile, requirements.txt, app/).
+# Without this, `gcloud run deploy --source` would also send the 350 MB .venv.
+.venv/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+tests/
+scripts/
+railway.json

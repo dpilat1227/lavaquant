@@ -54,7 +54,7 @@ Worth knowing:
 
 ## How it's built
 
-Next.js on Vercel calls a FastAPI backend on Railway. The DSL is parsed with `ast` against a function whitelist, no `eval`. BRAIN logins pass through the backend per request and aren't stored or logged.
+Next.js on Vercel calls a FastAPI backend on Google Cloud Run. The DSL is parsed with `ast` against a function whitelist, no `eval`. BRAIN logins pass through the backend per request and aren't stored or logged.
 
 ## Run locally
 
@@ -84,11 +84,20 @@ cd backend
 
 ## Deploy
 
-Vercel with root `frontend`, Railway with root `backend` (Dockerfile included).
+Vercel with root `frontend`. The backend is the Dockerfile in `backend`, on Cloud Run (scales to zero, so it costs about nothing when idle):
+
+```bash
+cd backend
+gcloud run deploy lavaquant-api --project lavaquant-drew --source . --region us-central1 \
+  --allow-unauthenticated --port 8000 --cpu 2 --memory 2Gi --timeout 300 \
+  --max-instances 2 --min-instances 0 --concurrency 4
+```
+
+`.gcloudignore` keeps the local `.venv` out of the upload. A backtest peaks near 300 MB and takes 3 to 25 seconds, so 2 GiB is generous. `max-instances 2` caps the bill if the endpoint is hammered. `railway.json` is left over from the earlier Railway deploy and is not used.
 
 | Variable | Where | |
 |---|---|---|
-| `NEXT_PUBLIC_API_URL` | Frontend | Backend URL, e.g. `https://x.up.railway.app` |
+| `NEXT_PUBLIC_API_URL` | Frontend | Backend URL, e.g. `https://lavaquant-api-1050413238132.us-central1.run.app` |
 | `NEXT_PUBLIC_SITE_URL` | Frontend | Public URL, for link previews |
 | `ALLOWED_ORIGINS` | Backend | Comma-separated CORS origins. Has defaults |
 | `CACHE_DIR` | Backend | Price data cache. Optional |
