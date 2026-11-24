@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { CARD_ALT, CARD_PATH, DESCRIPTION, TITLE } from "@/lib/siteMeta";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -13,16 +14,23 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const TITLE = "LavaQuant — Quantitative Alpha Research Platform";
-const DESCRIPTION =
-  "Write alpha expressions in the WorldQuant DSL, backtest them in seconds, and benchmark against WorldQuant BRAIN and Numerai. Built by Drew Pilat.";
-
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://quant.drew.fun"),
   title: TITLE,
   description: DESCRIPTION,
-  openGraph: { title: TITLE, description: DESCRIPTION, type: "website", siteName: "LavaQuant" },
-  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    type: "website",
+    siteName: "LavaQuant",
+    images: [{ url: CARD_PATH, width: 1200, height: 630, type: "image/png", alt: CARD_ALT }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [{ url: CARD_PATH, width: 1200, height: 630, alt: CARD_ALT }],
+  },
 };
 
 export const viewport: Viewport = {
